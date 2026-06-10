@@ -1,0 +1,115 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectCard from './ProjectCard.astro';
+
+/**
+ * Ordena los proyectos por estado de prioridad:
+ * "En Desarrollo" primero → "Mantenimiento" → "Completado"
+ * El primero de la lista será el featured (2 columnas en el grid Bento).
+ */
+const STATUS_ORDER = { 'En Desarrollo': 0, 'Mantenimiento': 1, 'Completado': 2 };
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => STATUS_ORDER[a.data.status] - STATUS_ORDER[b.data.status],
+);
+---
+
+<section id="proyectos" class="projects-section">
+
+  <!-- Encabezado de sección -->
+  <header class="projects-section__header">
+    <p class="projects-section__label">Trabajo seleccionado</p>
+    <h2 class="projects-section__title">Proyectos</h2>
+  </header>
+
+  <!--
+    Grid Bento asimétrico:
+      · 1 columna en mobile
+      · 2 columnas en md
+      · 3 columnas en lg
+    El primer proyecto recibe data-featured y ocupa 2 columnas (lg:col-span-2).
+    Esto crea la asimetría: [grande | normal]
+                                   [normal | normal]
+  -->
+  <ul class="projects-grid" role="list" aria-label="Lista de proyectos">
+    {projects.map((project, index) => (
+      <li class:list={['projects-grid__item', { 'projects-grid__item--featured': index === 0 }]}>
+        <ProjectCard project={project} featured={index === 0} />
+      </li>
+    ))}
+  </ul>
+
+</section>
+
+<style>
+  /* ── Sección ─────────────────────────────────────────────────────────── */
+  .projects-section {
+    padding-top: var(--spacing-section, 6rem);
+    padding-bottom: var(--spacing-section, 6rem);
+  }
+
+  /* ── Encabezado ──────────────────────────────────────────────────────── */
+  .projects-section__header {
+    margin-bottom: 2.5rem;          /* 40px */
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .projects-section__label {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #14B8A6;                 /* acento primario */
+    margin: 0;
+  }
+
+  .projects-section__title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: #EDEDED;
+    margin: 0;
+  }
+
+  /* ── Grid Bento ──────────────────────────────────────────────────────── */
+  .projects-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;                    /* 24px — múltiplo de 4px */
+  }
+
+  /* md: 2 columnas */
+  @media (min-width: 768px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Featured: 2 de 2 columnas */
+    .projects-grid__item--featured {
+      grid-column: span 2;
+    }
+  }
+
+  /* lg: 3 columnas — asimetría Bento */
+  @media (min-width: 1024px) {
+    .projects-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Featured: 2 de 3 columnas */
+    .projects-grid__item--featured {
+      grid-column: span 2;
+    }
+  }
+
+  .projects-grid__item {
+    /* Necesario para que ProjectCard con height:100% ocupe el item completo */
+    display: flex;
+    flex-direction: column;
+  }
+</style>
