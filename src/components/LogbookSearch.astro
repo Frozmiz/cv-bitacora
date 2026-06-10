@@ -1,0 +1,234 @@
+---
+interface Props {
+  /** JSON.stringify() del array de SearchItem — generado en LogbookSection */
+  index: string;
+}
+
+const { index } = Astro.props;
+---
+
+<!--
+  Custom Element <logbook-search>.
+  El <script> de abajo lo define; Astro lo procesa con Vite/TS.
+  El atributo data-index transporta el índice de búsqueda al cliente.
+-->
+<logbook-search data-index={index} class="ls-host">
+
+  <div class="ls-wrapper">
+    <!-- Icono de búsqueda decorativo -->
+    <span class="ls-icon" aria-hidden="true">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="15" height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+    </span>
+
+    <input
+      type="search"
+      class="ls-input"
+      placeholder="> Buscar por error, tecnología o contexto..."
+      aria-label="Buscar en la bitácora"
+      autocomplete="off"
+      spellcheck="false"
+    />
+
+    <!--
+      Contador de resultados — se actualiza vía JS.
+      aria-live="polite" para lectores de pantalla.
+    -->
+    <span
+      class="ls-count"
+      aria-live="polite"
+      aria-atomic="true"
+    ></span>
+  </div>
+
+</logbook-search>
+
+<script>
+  import Fuse from 'fuse.js';
+
+  interface SearchItem {
+    id: string;
+    context: string;
+    error: string;
+    technologies: string[];
+    solution: string;
+  }
+
+  class LogbookSearch extends HTMLElement {
+    #fuse: Fuse<SearchItem> | null = null;
+    /** <li data-entry-id="..."> elements in the page */
+    #entries: NodeListOf<HTMLElement> | null = null;
+    #countEl: HTMLElement | null = null;
+    #input: HTMLInputElement | null = null;
+
+    connectedCallback() {
+      const raw = this.dataset.index;
+      if (!raw) return;
+
+      const data = JSON.parse(raw) as SearchItem[];
+
+      this.#fuse = new Fuse(data, {
+        keys: [
+          { name: 'context',      weight: 0.3 },
+          { name: 'error',        weight: 0.35 },
+          { name: 'technologies', weight: 0.2 },
+          { name: 'solution',     weight: 0.15 },
+        ],
+        threshold: 0.35,   /* 0 = coincidencia exacta, 1 = todo */
+        ignoreLocation: true,
+        minMatchCharLength: 2,
+      });
+
+      /* Buscamos los <li> en el documento completo.
+         Hay una sola bitácora por página, por lo que es seguro. */
+      this.#entries = document.querySelectorAll<HTMLElement>('[data-entry-id]');
+      this.#countEl = this.querySelector<HTMLElement>('.ls-count');
+      this.#input   = this.querySelector<HTMLInputElement>('input');
+
+      this.#input?.addEventListener('input', (e) => {
+        this.#handleInput((e.target as HTMLInputElement).value);
+      });
+    }
+
+    #handleInput(raw: string) {
+      const query = raw.trim();
+
+      if (!query) {
+        this.#showAll();
+        return;
+      }
+
+      const results   = this.#fuse!.search(query);
+      const matchedIds = new Set(results.map((r) => r.item.id));
+
+      let visible = 0;
+      this.#entries?.forEach((el) => {
+        const id = el.dataset.entryId!;
+        if (matchedIds.has(id)) {
+          el.style.display = '';
+          visible++;
+        } else {
+          el.style.display = 'none';
+        }
+      });
+
+      this.#setCount(visible, query);
+    }
+
+    #showAll() {
+      this.#entries?.forEach((el) => { el.style.display = ''; });
+      this.#setCount(null, '');
+    }
+
+    #setCount(count: number | null, query: string) {
+      if (!this.#countEl) return;
+      if (count === null || !query) {
+        this.#countEl.textContent = '';
+        return;
+      }
+      const noun = count === 1 ? 'resultado' : 'resultados';
+      this.#countEl.textContent = `${count} ${noun}`;
+    }
+  }
+
+  /* Registro idempotente — evita errores si el script se evalúa dos veces */
+  if (!customElements.get('logbook-search')) {
+    customElements.define('logbook-search', LogbookSearch);
+  }
+</script>
+
+<style>
+  /* Custom element como bloque */
+  logbook-search,
+  .ls-host {
+    display: block;
+    margin-bottom: 2.5rem;      /* 40px — separación antes del timeline */
+  }
+
+  /* ── Contenedor del input ────────────────────────────────────────────── */
+  .ls-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 560px;           /* no ocupa todo el ancho — DESIGN §5 */
+  }
+
+  /* ── Icono ───────────────────────────────────────────────────────────── */
+  .ls-icon {
+    position: absolute;
+    left: 0.875rem;
+    display: flex;
+    align-items: center;
+    color: #A1A1AA;
+    pointer-events: none;
+    transition: color 150ms ease;
+  }
+
+  /* ── Campo de búsqueda ───────────────────────────────────────────────── */
+  .ls-input {
+    width: 100%;
+    min-height: 44px;           /* área táctil mínima — DESIGN §8 */
+    padding: 0.625rem 6rem 0.625rem 2.625rem; /* dejar espacio al icono y al contador */
+
+    background-color: #111111;  /* Surface 1 */
+    border: 1px solid #27272A;
+    border-radius: 6px;
+    color: #EDEDED;             /* text-primary */
+
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8125rem;       /* 13px — monospace, ligeramente más pequeño */
+
+    outline: none;
+    transition: border-color 200ms ease;
+
+    /* Elimina el botón nativo del input[type=search] en Webkit */
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .ls-input::placeholder {
+    color: #3F3F46;             /* border-hover — discreto, no distrae */
+  }
+
+  /* Quitar el icono nativo de búsqueda y el botón de borrar en Webkit */
+  .ls-input::-webkit-search-decoration,
+  .ls-input::-webkit-search-cancel-button,
+  .ls-input::-webkit-search-results-button { display: none; }
+
+  .ls-input:focus {
+    border-color: #14B8A6;      /* acento primario al enfocar */
+  }
+
+  .ls-input:focus + .ls-icon,
+  .ls-wrapper:focus-within .ls-icon {
+    color: #14B8A6;
+  }
+
+  /* ── Contador de resultados ──────────────────────────────────────────── */
+  .ls-count {
+    position: absolute;
+    right: 0.875rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.6875rem;       /* 11px */
+    color: #A1A1AA;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 150ms ease;
+  }
+
+  /* Sin resultados — el contador se pone en rojo error */
+  .ls-count:empty {
+    display: none;
+  }
+</style>

@@ -1,0 +1,154 @@
+---
+import { getCollection } from 'astro:content';
+import LogbookEntry from './LogbookEntry.astro';
+import LogbookSearch from './LogbookSearch.astro';
+
+/** Entradas ordenadas de más reciente a más antigua */
+const entries = (await getCollection('logbook')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+/**
+ * Índice de búsqueda — solo los campos necesarios para Fuse.js.
+ * Se serializa a JSON y viaja al cliente como data attribute.
+ */
+const searchIndex = JSON.stringify(
+  entries.map((e) => ({
+    id:           e.id,
+    context:      e.data.context,
+    error:        e.data.error,
+    technologies: e.data.technologies,
+    solution:     e.data.solution,
+  })),
+);
+---
+
+<section id="bitacora" class="logbook-section">
+
+  <!-- Encabezado de sección -->
+  <header class="logbook-section__header">
+    <p class="logbook-section__label">Registro técnico</p>
+    <h2 class="logbook-section__title">Bitácora</h2>
+    <p class="logbook-section__subtitle">
+      Problemas reales encontrados en producción y en desarrollo,
+      con el proceso completo de diagnóstico y solución.
+    </p>
+  </header>
+
+  <!--
+    Timeline:
+    El <ul> lleva el border-left que forma la línea vertical continua.
+    Los nodos circulares de cada entrada se posicionan sobre esa línea.
+    El último elemento no tiene padding-bottom para que la línea
+    no sobrepase el último nodo (overflow: hidden en el ul).
+  -->
+  {entries.length > 0 ? (
+    <>
+      <LogbookSearch index={searchIndex} />
+
+      <ul
+        class="logbook-timeline"
+        role="list"
+        aria-label="Entradas de la bitácora"
+      >
+        {entries.map((entry, index) => (
+          <li
+            class:list={[
+              'logbook-timeline__item',
+              { 'logbook-timeline__item--last': index === entries.length - 1 },
+            ]}
+            data-entry-id={entry.id}
+          >
+            <LogbookEntry entry={entry} />
+          </li>
+        ))}
+      </ul>
+    </>
+  ) : (
+    <p class="logbook-section__empty">
+      Aún no hay entradas en la bitácora.
+    </p>
+  )}
+
+</section>
+
+<style>
+  /* ── Sección ─────────────────────────────────────────────────────────── */
+  .logbook-section {
+    padding-top: var(--spacing-section, 6rem);
+    padding-bottom: var(--spacing-section, 6rem);
+  }
+
+  /* ── Encabezado ──────────────────────────────────────────────────────── */
+  .logbook-section__header {
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    max-width: 65ch;
+  }
+
+  .logbook-section__label {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #14B8A6;
+    margin: 0;
+  }
+
+  .logbook-section__title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: #EDEDED;
+    margin: 0;
+  }
+
+  .logbook-section__subtitle {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: #A1A1AA;
+    margin: 0.25rem 0 0;
+  }
+
+  .logbook-section__empty {
+    font-size: 0.9375rem;
+    color: #A1A1AA;
+    font-family: var(--font-mono, monospace);
+    margin: 0;
+  }
+
+  /* ── Timeline (línea vertical continua) ─────────────────────────────── */
+  .logbook-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    /*
+      La línea vertical está en el ul.
+      margin-left separa la línea del borde de la página.
+    */
+    border-left: 1px solid #27272A;
+    margin-left: 0.3125rem;    /* 5px — centra la línea bajo los nodos */
+    overflow: hidden;          /* evita que la línea sobrepase el último nodo */
+  }
+
+  .logbook-timeline__item {
+    /* Sin padding-bottom en el último elemento para que la línea termine en el nodo */
+  }
+
+  .logbook-timeline__item--last :global(.lb-entry) {
+    padding-bottom: 0;
+  }
+
+  /*
+    Cuando Fuse oculta un elemento, display:none colapsa su altura a cero.
+    La línea del <ul> continúa sin interrupciones porque border-left
+    está en el ul, no en los li. Los elementos ocultos simplemente
+    no contribuyen a la altura del contenedor.
+  */
+  .logbook-timeline__item[style*="display: none"] {
+    pointer-events: none;
+  }
+</style>

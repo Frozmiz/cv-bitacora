@@ -1,0 +1,231 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'logbook'>;
+}
+
+const { entry } = Astro.props;
+const { date, context, technologies, error, research, solution, learning } = entry.data;
+
+/** Formatea la fecha en español: "10 jun 2026" */
+const dateFormatted = new Intl.DateTimeFormat('es-ES', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+}).format(date);
+
+/**
+ * Convierte los backticks de un string en etiquetas <code> inline.
+ * Necesario porque los campos del frontmatter son strings planos,
+ * no markdown renderizado.
+ */
+function parseInlineCode(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+}
+---
+
+<article class="lb-entry" aria-label={`Entrada del ${dateFormatted}: ${context}`}>
+
+  <!-- Nodo circular sobre la línea del timeline -->
+  <span class="lb-entry__node" aria-hidden="true"></span>
+
+  <!-- ── Cabecera ──────────────────────────────────────────────────────── -->
+  <header class="lb-entry__header">
+    <time
+      datetime={date.toISOString().slice(0, 10)}
+      class="lb-entry__date"
+    >
+      {dateFormatted}
+    </time>
+    <h3 class="lb-entry__context">{context}</h3>
+
+    <!-- Tecnologías implicadas (pills monospace) -->
+    <ul class="lb-entry__tech" aria-label="Tecnologías implicadas">
+      {technologies.map((tech) => (
+        <li><span class="pill">{tech}</span></li>
+      ))}
+    </ul>
+  </header>
+
+  <!-- ── Cuerpo ────────────────────────────────────────────────────────── -->
+  <div class="lb-entry__body">
+
+    <!-- Error / dificultad — estilo terminal -->
+    <section class="lb-entry__block" aria-labelledby={`error-${entry.id}`}>
+      <h4 id={`error-${entry.id}`} class="lb-entry__label lb-entry__label--error">
+        <span aria-hidden="true">⚑</span> Error / Dificultad
+      </h4>
+      <div class="lb-entry__terminal">
+        <span class="lb-entry__terminal-prompt" aria-hidden="true">$</span>
+        <p class="lb-entry__terminal-text">{error}</p>
+      </div>
+    </section>
+
+    <!-- Investigación -->
+    <section class="lb-entry__block" aria-labelledby={`research-${entry.id}`}>
+      <h4 id={`research-${entry.id}`} class="lb-entry__label lb-entry__label--research">
+        <span aria-hidden="true">◎</span> Investigación
+      </h4>
+      <p class="lb-entry__text" set:html={parseInlineCode(research)} />
+    </section>
+
+    <!-- Solución -->
+    <section class="lb-entry__block" aria-labelledby={`solution-${entry.id}`}>
+      <h4 id={`solution-${entry.id}`} class="lb-entry__label lb-entry__label--solution">
+        <span aria-hidden="true">✓</span> Solución
+      </h4>
+      <p class="lb-entry__text" set:html={parseInlineCode(solution)} />
+    </section>
+
+    <!-- Aprendizaje -->
+    <section class="lb-entry__block" aria-labelledby={`learning-${entry.id}`}>
+      <h4 id={`learning-${entry.id}`} class="lb-entry__label lb-entry__label--learning">
+        <span aria-hidden="true">→</span> Aprendizaje
+      </h4>
+      <p class="lb-entry__text" set:html={parseInlineCode(learning)} />
+    </section>
+
+  </div>
+</article>
+
+<style>
+  /* ── Entrada principal ───────────────────────────────────────────────── */
+  .lb-entry {
+    position: relative;
+    padding-left: 2rem;         /* espacio entre la línea y el contenido */
+    padding-bottom: 3.5rem;     /* separación entre entradas */
+  }
+
+  /* ── Nodo circular sobre la línea ───────────────────────────────────── */
+  .lb-entry__node {
+    position: absolute;
+    left: calc(-0.3125rem);     /* centra el nodo (10px/2 - 1px border) sobre la línea */
+    top: 0.35rem;
+    width: 0.625rem;            /* 10px */
+    height: 0.625rem;
+    border-radius: 50%;
+    background-color: #10B981;  /* status-success — entrada resuelta */
+    outline: 2px solid #0A0A0A; /* crea el anillo usando el fondo base */
+    outline-offset: 1px;
+  }
+
+  /* ── Cabecera ────────────────────────────────────────────────────────── */
+  .lb-entry__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .lb-entry__date {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    color: #A1A1AA;
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
+  }
+
+  .lb-entry__context {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #EDEDED;
+    margin: 0;
+    line-height: 1.4;
+    max-width: 70ch;
+  }
+
+  .lb-entry__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    list-style: none;
+    margin: 0.25rem 0 0;
+    padding: 0;
+  }
+
+  /* ── Cuerpo ──────────────────────────────────────────────────────────── */
+  .lb-entry__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  /* ── Bloque semántico (error / research / solution / learning) ───────── */
+  .lb-entry__block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .lb-entry__label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+
+  /* Colores semánticos de los labels (DESIGN §2 Status/Logbook) */
+  .lb-entry__label--error    { color: #EF4444; }
+  .lb-entry__label--research { color: #F59E0B; }
+  .lb-entry__label--solution { color: #10B981; }
+  .lb-entry__label--learning { color: #A1A1AA; }
+
+  /* ── Bloque terminal (para el campo error) ───────────────────────────── */
+  .lb-entry__terminal {
+    display: flex;
+    gap: 0.625rem;
+    background-color: #1A1A1A;  /* Surface 2 */
+    border: 1px solid #27272A;
+    border-radius: 6px;
+    padding: 0.875rem 1rem;
+    max-width: 75ch;
+  }
+
+  .lb-entry__terminal-prompt {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8125rem;
+    color: #EF4444;
+    user-select: none;
+    flex-shrink: 0;
+    padding-top: 0.05em;
+  }
+
+  .lb-entry__terminal-text {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: #A1A1AA;
+    margin: 0;
+    word-break: break-word;
+  }
+
+  /* ── Texto de los campos research / solution / learning ──────────────── */
+  .lb-entry__text {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: #A1A1AA;
+    margin: 0;
+    max-width: 72ch;   /* DESIGN §7: alineado a la izquierda, longitud legible */
+  }
+
+  /* Código inline generado por parseInlineCode() */
+  :global(.inline-code) {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8125rem;
+    background-color: #1A1A1A;  /* Surface 2 */
+    color: #14B8A6;              /* acento primario para código */
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    border: 1px solid #27272A;
+  }
+</style>
