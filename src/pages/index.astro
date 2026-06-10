@@ -1,17 +1,31 @@
 ---
-
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectsSection from '../components/ProjectsSection.astro';
+import LogbookSection from '../components/LogbookSection.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+  title="frozmiz.dev"
+  description="Frontend Lead / Product Engineer. CV interactivo y bitácora de ingeniería."
+>
+  <!-- ── Hero (full-bleed, fuera del contenedor 1024px) ───────────────── -->
+  <Hero slot="full-bleed" />
+
+  <!-- ── Sobre mí ──────────────────────────────────────────────────────── -->
+  <section
+    id="sobre-mi"
+    style="padding-top: var(--spacing-section); padding-bottom: var(--spacing-section);"
+  >
+    <h2 class="text-2xl font-semibold mb-8">Sobre mí</h2>
+    <p style="color: #A1A1AA; line-height: 1.8; max-width: 65ch;">
+      Placeholder — esta sección se completará con el componente Hero.
+    </p>
+  </section>
+
+  <!-- ── Proyectos ─────────────────────────────────────────────────────── -->
+  <ProjectsSection />
+
+  <!-- ── Bitácora ──────────────────────────────────────────────────────── -->
+  <LogbookSection />
+</Layout>
