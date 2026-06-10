@@ -1,0 +1,416 @@
+---
+import {
+  siAngular, siNestjs, siAstro, siTypescript, siTailwindcss,
+} from 'simple-icons';
+
+interface Props {
+  /**
+   * Imagen de fondo del hero.
+   * Por defecto: foto NASA "Earth from space" vía Unsplash.
+   * Sustituye con la ruta de tu propia imagen cuando la tengas.
+   */
+  image?: string;
+}
+
+const {
+  image = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=85&auto=format&fit=crop',
+} = Astro.props;
+
+const techStack = [
+  { name: 'Angular',     icon: siAngular,     color: `#${siAngular.hex}` },
+  { name: 'NestJS',      icon: siNestjs,      color: `#${siNestjs.hex}` },
+  { name: 'Astro',       icon: siAstro,       color: `#${siAstro.hex}` },
+  { name: 'TypeScript',  icon: siTypescript,  color: `#${siTypescript.hex}` },
+  { name: 'TailwindCSS', icon: siTailwindcss, color: `#${siTailwindcss.hex}` },
+];
+---
+
+<section id="inicio" class="hero" aria-label="Presentación">
+
+  <!-- ── Imagen de fondo ───────────────────────────────────────────────── -->
+  <div class="hero__bg" aria-hidden="true">
+    <img
+      src={image}
+      alt=""
+      class="hero__bg-img"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
+  </div>
+
+  <!--
+    Overlay tipo vignette:
+    · Centro ligeramente semitransparente (la imagen respira)
+    · Bordes muy oscuros (funden con el resto de la página)
+    · Capa inferior opaca extra para que el texto siempre tenga contraste
+  -->
+  <div class="hero__vignette"   aria-hidden="true"></div>
+  <div class="hero__text-guard" aria-hidden="true"></div>
+
+  <!-- ── Contenido centrado ────────────────────────────────────────────── -->
+  <div class="hero__content">
+
+    <!-- Badge -->
+    <p class="hero__badge">
+      <span class="hero__badge-dot" aria-hidden="true"></span>
+      Disponible para proyectos
+    </p>
+
+    <!-- Nombre — firma de autor entre el badge y el titular -->
+    <p class="hero__name" aria-label="Alejandro González López">
+      <span class="hero__name-line" aria-hidden="true">——</span>
+      ALEJANDRO GONZALEZ LOPEZ
+    </p>
+
+    <!-- Titular — dos líneas, segunda en muted -->
+    <h1 class="hero__title">
+      <span class="hero__title-line">Construyendo</span>
+      <span class="hero__title-line">interfaces</span>
+      <span class="hero__title-line hero__title-muted">escalables.</span>
+    </h1>
+
+    <!-- Bio -->
+    <p class="hero__bio">
+      Soy <strong>Frontend Lead&nbsp;/&nbsp;Product Engineer</strong> con foco en
+      arquitecturas de interfaces de alto rendimiento y diseño de sistemas escalables.
+    </p>
+
+    <!-- Pills de tecnologías -->
+    <ul class="hero__stack" aria-label="Stack principal">
+      {techStack.map(({ name, icon, color }) => (
+        <li>
+          <span class="hero__pill">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"
+              aria-hidden="true" style={`color: ${color};`}>
+              <path d={icon.path} />
+            </svg>
+            {name.toUpperCase()}
+          </span>
+        </li>
+      ))}
+    </ul>
+
+    <!-- CTAs -->
+    <div class="hero__ctas">
+      <a href="#proyectos" class="hero__cta hero__cta--primary">Ver Proyectos</a>
+      <a href="mailto:contacto@frozmiz.dev" class="hero__cta hero__cta--ghost">Contactar</a>
+    </div>
+
+  </div>
+
+  <!-- Indicador de scroll — patrón de profundidad UX ──────────────────── -->
+  <div class="hero__scroll" aria-hidden="true">
+    <span class="hero__scroll-label">scroll</span>
+    <span class="hero__scroll-line"></span>
+  </div>
+
+</section>
+
+<style>
+  /* ── Sección full-bleed ──────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;   /* centrado horizontal + vertical */
+    overflow: hidden;
+  }
+
+  /* ── Imagen de fondo ─────────────────────────────────────────────────── */
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-color: #0A0A0A; /* fallback mientras carga */
+  }
+
+  .hero__bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%; /* alineación óptica — no matemática */
+    display: block;
+  }
+
+  /* ── Vignette radial — oscurece los bordes, respira en el centro ────── */
+  .hero__vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(
+      ellipse 110% 90% at 50% 48%,
+      rgba(10, 10, 10, 0.30)   0%,   /* centro: imagen visible */
+      rgba(10, 10, 10, 0.60)  45%,
+      rgba(10, 10, 10, 0.88)  72%,
+      rgba(10, 10, 10, 0.98) 100%    /* bordes: funde con el fondo */
+    );
+  }
+
+  /*
+    Capa de texto-guard: asegura contraste mínimo WCAG AA en el área
+    donde vive el contenido, independientemente de la imagen.
+  */
+  .hero__text-guard {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: radial-gradient(
+      ellipse 65% 55% at 50% 50%,
+      rgba(10, 10, 10, 0.45) 0%,
+      transparent             100%
+    );
+  }
+
+  /* ── Contenido ───────────────────────────────────────────────────────── */
+  .hero__content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* centrado horizontal */
+    text-align: center;
+    gap: 1.75rem;
+    max-width: 740px;
+    padding: var(--spacing-section, 6rem) clamp(1.25rem, 5vw, 3rem);
+    /* Offset óptico: el ojo percibe el centro 5% más arriba del matemático */
+    margin-top: -3vh;
+  }
+
+  /* ── Badge ───────────────────────────────────────────────────────────── */
+  .hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #A1A1AA;
+    background-color: rgba(26, 26, 26, 0.85);
+    border: 1px solid #27272A;
+    border-radius: 4px;
+    padding: 0.3rem 0.75rem;
+    margin: 0;
+    /* Backdrop-blur sutil si el navegador lo soporta */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .hero__badge-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #10B981;
+    flex-shrink: 0;
+    animation: pulse-dot 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1;   transform: scale(1);   }
+    50%       { opacity: 0.4; transform: scale(1.5); }
+  }
+
+  /* ── Nombre ──────────────────────────────────────────────────────────── */
+  .hero__name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    margin: 0;
+    font-family: var(--font-mono, monospace);
+    font-size: clamp(0.75rem, 1.2vw, 0.9375rem);
+    font-weight: 400;
+    letter-spacing: 0.32em;                /* tracking ultra-abierto — firma */
+    text-transform: uppercase;
+    color: #14B8A6;                        /* acento primario — diferenciador */
+  }
+
+  .hero__name-line {
+    color: #27272A;                        /* guion decorativo, muy sutil */
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  /* ── Titular — tres líneas con jerarquía tipográfica ─────────────────── */
+  .hero__title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    font-size: clamp(3rem, 7vw + 0.5rem, 5.5rem); /* fluid 48px → 88px */
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.045em;
+    margin: 0;
+  }
+
+  .hero__title-line {
+    display: block;
+    color: #EDEDED;
+  }
+
+  /* Tercera línea — muted, misma escala, crea ritmo visual */
+  .hero__title-muted {
+    color: #52525B; /* Zinc-600 — perceptiblemente más oscuro que Zinc-500 */
+  }
+
+  /* ── Bio ─────────────────────────────────────────────────────────────── */
+  .hero__bio {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #A1A1AA;
+    max-width: 52ch;
+    margin: 0;
+  }
+
+  .hero__bio strong {
+    color: #EDEDED;
+    font-weight: 500;
+  }
+
+  /* ── Pills ───────────────────────────────────────────────────────────── */
+  .hero__stack {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hero__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: #A1A1AA;
+    background-color: rgba(26, 26, 26, 0.85);
+    border: 1px solid #27272A;
+    border-radius: 4px;
+    padding: 0.3rem 0.625rem;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: border-color 150ms ease, color 150ms ease;
+  }
+
+  .hero__pill:hover {
+    border-color: #3F3F46;
+    color: #EDEDED;
+  }
+
+  .hero__pill svg { flex-shrink: 0; }
+
+  /* ── CTAs ────────────────────────────────────────────────────────────── */
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .hero__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    padding: 0.625rem 1.5rem;
+    min-height: 44px;
+    border-radius: 6px;
+    transition: opacity 150ms ease, background-color 150ms ease, color 150ms ease;
+  }
+
+  .hero__cta--primary {
+    background-color: #EDEDED;
+    color: #0A0A0A;
+    border: none;
+  }
+  .hero__cta--primary:hover { opacity: 0.88; }
+
+  .hero__cta--ghost {
+    background-color: rgba(10, 10, 10, 0.4);
+    color: #A1A1AA;
+    border: 1px solid rgba(63, 63, 70, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .hero__cta--ghost:hover {
+    background-color: rgba(26, 26, 26, 0.85);
+    color: #EDEDED;
+    border-color: #52525B;
+  }
+
+  /* ── Indicador de scroll ─────────────────────────────────────────────── */
+  .hero__scroll {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hero__scroll-label {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #52525B;
+  }
+
+  .hero__scroll-line {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, #52525B, transparent);
+    animation: scroll-pulse 2s ease-in-out infinite;
+    transform-origin: top;
+  }
+
+  @keyframes scroll-pulse {
+    0%   { transform: scaleY(0); opacity: 0; }
+    30%  { opacity: 1; }
+    70%  { transform: scaleY(1); opacity: 1; }
+    100% { transform: scaleY(1); opacity: 0; }
+  }
+
+  /* ── Responsive ──────────────────────────────────────────────────────── */
+  @media (max-width: 640px) {
+    .hero__title {
+      /* En mobile la tipografía fluida se encoge sola, pero ajustamos align */
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .hero__content {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .hero__stack,
+    .hero__ctas {
+      justify-content: flex-start;
+    }
+
+    /* En mobile el vignette cubre más para que el texto siempre sea legible */
+    .hero__vignette {
+      background: radial-gradient(
+        ellipse 130% 90% at 30% 50%,
+        rgba(10, 10, 10, 0.50)   0%,
+        rgba(10, 10, 10, 0.90)  65%,
+        rgba(10, 10, 10, 0.99) 100%
+      );
+    }
+  }
+</style>
