@@ -12,6 +12,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.4.6"
+    "@tailwindcss/vite": "^4.3.0",
+    "astro": "^6.4.6",
+    "fuse.js": "^7.4.2",
+    "simple-icons": "^16.23.0",
+    "tailwindcss": "^4.3.0",
+    "zod": "^4.4.3"
   }
 }

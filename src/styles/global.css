@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/* ─── Design tokens ──────────────────────────────────────────────────────── */
+@theme {
+  /* Backgrounds */
+  --color-base:      #0A0A0A;
+  --color-surface-1: #111111;
+  --color-surface-2: #1A1A1A;
+
+  /* Borders */
+  --color-border:       #27272A;
+  --color-border-hover: #3F3F46;
+
+  /* Text */
+  --color-text-primary:   #EDEDED;
+  --color-text-secondary: #A1A1AA;
+
+  /* Accents */
+  --color-accent:   #14B8A6;
+  --color-violet:   #8B5CF6;
+
+  /* Status */
+  --color-status-error:    #EF4444;
+  --color-status-warning:  #F59E0B;
+  --color-status-success:  #10B981;
+
+  /* Fonts */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* Spacing scale (multiples of 4px) */
+  --spacing-section: 6rem; /* 96px — separación mínima entre secciones */
+}
+
+/* ─── Base reset ─────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--color-base);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--color-base);
+  }
+
+  /* Monospace para tecnologías, fechas y snippets */
+  code, kbd, samp, pre,
+  [data-mono] {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  /* Sin sombras paralelas — jerarquía solo por surface y bordes */
+  * {
+    box-shadow: none !important;
+  }
+
+  /* Headings: kerning ajustado */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--color-text-primary);
+  }
+
+  /* Texto de apoyo (fechas, metadatos) */
+  time, [data-secondary] {
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  /* Scrollbar discreta en navegadores Webkit */
+  ::-webkit-scrollbar        { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track  { background: var(--color-base); }
+  ::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-border-hover); }
+}
+
+/* ─── Utilities propias ──────────────────────────────────────────────────── */
+@layer utilities {
+  /* Pill / etiqueta de tecnología */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.625rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-text-secondary);
+  }
+
+  /* Tarjeta base (Bento) */
+  .card {
+    background-color: var(--color-surface-1);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    transition: border-color 200ms ease;
+  }
+  .card:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  /* Botón primario */
+  .btn-primary {
+    background-color: var(--color-text-primary);
+    color: var(--color-base);
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: opacity 150ms ease;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+
+  /* Botón fantasma */
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .btn-ghost:hover {
+    background-color: var(--color-surface-2);
+    color: var(--color-text-primary);
+  }
+}

@@ -1,0 +1,27 @@
+---
+description: Usar siempre pnpm para instalar dependencias y ejecutar scripts
+alwaysApply: true
+---
+
+# Gestor de paquetes: pnpm
+
+Usa **siempre** `pnpm` para cualquier operación con paquetes o scripts en este proyecto.
+
+## Comandos correctos
+
+| Acción | Comando |
+|--------|---------|
+| Instalar dependencias | `pnpm install` |
+| Añadir dependencia | `pnpm add <paquete>` |
+| Añadir devDependency | `pnpm add -D <paquete>` |
+| Eliminar paquete | `pnpm remove <paquete>` |
+| Ejecutar script | `pnpm run <script>` |
+| Ejecutar binario local | `pnpm exec <binario>` |
+| Build | `pnpm run build` |
+| Dev server | `pnpm run dev` |
+| Preview | `pnpm run preview` |
+
+## Prohibido
+
+- ❌ `npm install` / `npm run` / `npx`
+- ❌ `yarn add` / `yarn run`
