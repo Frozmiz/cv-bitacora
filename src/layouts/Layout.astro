@@ -1,0 +1,104 @@
+---
+import Navigation from '../components/Navigation.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Nombre canónico del sitio — se antepone al título de cada página */
+  siteName?: string;
+}
+
+const {
+  title = 'Portfolio',
+  description = 'CV interactivo y bitácora de ingeniería.',
+  siteName = 'frozmiz.dev',
+} = Astro.props;
+
+const pageTitle = title === siteName ? siteName : `${title} · ${siteName}`;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO -->
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph básico -->
+    <meta property="og:title"       content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type"        content="website" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon"                      href="/favicon.ico" />
+
+    <!--
+      Fuentes: Inter (400/500/600) + JetBrains Mono (400/500).
+      display=swap evita el FOIT; subset=latin reduce el peso.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+  </head>
+
+  <body>
+    <!--
+      Shell de la app:
+        · md+ → sidebar fijo a la izquierda (64px) + contenido con margin-left
+        · mobile → contenido ocupa toda la pantalla + bottom bar superpuesta
+    -->
+    <div class="app-shell">
+      <Navigation />
+
+      <!--
+        Área de contenido principal.
+        – md+: desplazada 64px a la derecha para no solapar el sidebar.
+        – mobile: padding inferior para no quedar bajo la bottom bar.
+      -->
+      <main
+        id="main-content"
+        class="
+          flex-1
+          md:ml-16
+          pb-20 md:pb-0
+        "
+      >
+        <!--
+          Slot full-bleed: ocupa el 100% del <main> sin contenedor ni padding.
+          Para componentes como el Hero que deben llegar hasta el borde.
+        -->
+        <slot name="full-bleed" />
+
+        <!--
+          Contenedor de lectura: max-w 1024px centrado,
+          con padding horizontal generoso y separación entre secciones.
+        -->
+        <div
+          class="
+            mx-auto w-full
+            max-w-[1024px]
+            px-4 sm:px-6 md:px-8 lg:px-12
+          "
+        >
+          <slot />
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
+
+<style>
+  .app-shell {
+    display: flex;
+    min-height: 100dvh;
+  }
+</style>
