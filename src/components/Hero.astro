@@ -4,16 +4,12 @@ import {
 } from 'simple-icons';
 
 interface Props {
-  /**
-   * Imagen de fondo del hero.
-   * Por defecto: foto NASA "Earth from space" vía Unsplash.
-   * Sustituye con la ruta de tu propia imagen cuando la tengas.
-   */
+  /** Imagen de fondo del hero. Por defecto: wireframe 3D local. */
   image?: string;
 }
 
 const {
-  image = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=85&auto=format&fit=crop',
+  image = '/images/hero-cover.jpg',
 } = Astro.props;
 
 const techStack = [
@@ -40,13 +36,14 @@ const techStack = [
   </div>
 
   <!--
-    Overlay tipo vignette:
-    · Centro ligeramente semitransparente (la imagen respira)
-    · Bordes muy oscuros (funden con el resto de la página)
-    · Capa inferior opaca extra para que el texto siempre tenga contraste
+    Overlays:
+    · Acento teal sutil (DESIGN §6 — glow permitido solo en Hero)
+    · Vignette — oscurece bordes y centro para legibilidad del texto
+    · Text-guard — contraste mínimo sobre las líneas blancas del wireframe
   -->
-  <div class="hero__vignette"   aria-hidden="true"></div>
-  <div class="hero__text-guard" aria-hidden="true"></div>
+  <div class="hero__accent-glow" aria-hidden="true"></div>
+  <div class="hero__vignette"    aria-hidden="true"></div>
+  <div class="hero__text-guard"  aria-hidden="true"></div>
 
   <!-- ── Contenido centrado ────────────────────────────────────────────── -->
   <div class="hero__content">
@@ -130,35 +127,64 @@ const techStack = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 40%; /* alineación óptica — no matemática */
+    object-position: center center;
     display: block;
+    /*
+      Atenúa las líneas blancas del wireframe para que no compitan
+      con el titular. El fondo ya es oscuro — solo bajamos brillo y saturación.
+    */
+    filter: brightness(0.62) saturate(0.45) contrast(1.08);
+    transform: scale(1.04);
+    transform-origin: center center;
   }
 
-  /* ── Vignette radial — oscurece los bordes, respira en el centro ────── */
-  .hero__vignette {
+  /* ── Glow teal — DESIGN §6, opacidad ~10% ───────────────────────────── */
+  .hero__accent-glow {
     position: absolute;
     inset: 0;
     z-index: 1;
     background: radial-gradient(
-      ellipse 110% 90% at 50% 48%,
-      rgba(10, 10, 10, 0.30)   0%,   /* centro: imagen visible */
-      rgba(10, 10, 10, 0.60)  45%,
-      rgba(10, 10, 10, 0.88)  72%,
-      rgba(10, 10, 10, 0.98) 100%    /* bordes: funde con el fondo */
+      ellipse 55% 45% at 50% 44%,
+      rgba(20, 184, 166, 0.09) 0%,
+      transparent              72%
     );
+    pointer-events: none;
+  }
+
+  /* ── Vignette — funde bordes con #0A0A0A y oscurece el centro ─────── */
+  .hero__vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+      radial-gradient(
+        ellipse 120% 100% at 50% 50%,
+        rgba(10, 10, 10, 0.55)   0%,
+        rgba(10, 10, 10, 0.35)  38%,
+        rgba(10, 10, 10, 0.72)  68%,
+        rgba(10, 10, 10, 0.97) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(10, 10, 10, 0.35) 0%,
+        transparent             28%,
+        transparent             72%,
+        rgba(10, 10, 10, 0.55) 100%
+      );
   }
 
   /*
-    Capa de texto-guard: asegura contraste mínimo WCAG AA en el área
-    donde vive el contenido, independientemente de la imagen.
+    Text-guard: las líneas del wireframe son blancas — esta capa garantiza
+    contraste del titular aunque la red 3D pase por detrás del contenido.
   */
   .hero__text-guard {
     position: absolute;
     inset: 0;
-    z-index: 2;
+    z-index: 3;
     background: radial-gradient(
-      ellipse 65% 55% at 50% 50%,
-      rgba(10, 10, 10, 0.45) 0%,
+      ellipse 58% 48% at 50% 48%,
+      rgba(10, 10, 10, 0.68) 0%,
+      rgba(10, 10, 10, 0.28) 55%,
       transparent             100%
     );
   }
@@ -166,7 +192,7 @@ const techStack = [
   /* ── Contenido ───────────────────────────────────────────────────────── */
   .hero__content {
     position: relative;
-    z-index: 3;
+    z-index: 4;
     display: flex;
     flex-direction: column;
     align-items: center;    /* centrado horizontal */
@@ -354,7 +380,7 @@ const techStack = [
     bottom: 2.5rem;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 3;
+    z-index: 4;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -403,13 +429,34 @@ const techStack = [
       justify-content: flex-start;
     }
 
-    /* En mobile el vignette cubre más para que el texto siempre sea legible */
+    /* En mobile el wireframe compite más con el texto — overlays más fuertes */
+    .hero__bg-img {
+      object-position: 60% center;
+      filter: brightness(0.55) saturate(0.4) contrast(1.05);
+    }
+
     .hero__vignette {
+      background:
+        radial-gradient(
+          ellipse 140% 95% at 35% 50%,
+          rgba(10, 10, 10, 0.72)   0%,
+          rgba(10, 10, 10, 0.88)  60%,
+          rgba(10, 10, 10, 0.99) 100%
+        ),
+        linear-gradient(
+          to bottom,
+          rgba(10, 10, 10, 0.5) 0%,
+          transparent           30%,
+          rgba(10, 10, 10, 0.65) 100%
+        );
+    }
+
+    .hero__text-guard {
       background: radial-gradient(
-        ellipse 130% 90% at 30% 50%,
-        rgba(10, 10, 10, 0.50)   0%,
-        rgba(10, 10, 10, 0.90)  65%,
-        rgba(10, 10, 10, 0.99) 100%
+        ellipse 90% 70% at 35% 48%,
+        rgba(10, 10, 10, 0.78) 0%,
+        rgba(10, 10, 10, 0.4)  60%,
+        transparent            100%
       );
     }
   }

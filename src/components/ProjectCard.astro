@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import ArticleWireframe from './ArticleWireframe.astro';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -8,9 +9,15 @@ interface Props {
    * El grid padre aplica la clase col-span mediante data attribute.
    */
   featured?: boolean;
+  index?: number;
 }
 
-const { project, featured = false } = Astro.props;
+const CORNERS = ['tr', 'tl', 'br', 'bl'] as const;
+
+const { project, featured = false, index = 0 } = Astro.props;
+const corner = featured ? 'tr' : CORNERS[index % CORNERS.length];
+const intensity = featured ? 'medium' : 'soft';
+const crop = (index % 4) as 0 | 1 | 2 | 3;
 const { title, status, description, problem, technologies, links } = project.data;
 
 /** Indicador visual de estado — colores del DESIGN.md §2 Status/Logbook */
@@ -28,6 +35,8 @@ const statusInfo = STATUS_MAP[status];
   data-featured={featured ? 'true' : undefined}
   aria-label={`Proyecto: ${title}`}
 >
+  <ArticleWireframe corner={corner} intensity={intensity} crop={crop} />
+
   <!-- ── Cabecera ──────────────────────────────────────────────────────── -->
   <header class="project-card__header">
     <h3 class="project-card__title">{title}</h3>
@@ -122,6 +131,8 @@ const statusInfo = STATUS_MAP[status];
 <style>
   /* ── Tarjeta (DESIGN §4 Tarjetas de Proyecto) ───────────────────────── */
   .project-card {
+    position: relative;
+    overflow: hidden;
     background-color: #111111;          /* Surface 1 */
     border: 1px solid #27272A;          /* Zinc-800 */
     border-radius: 0.75rem;             /* 12px */
@@ -135,6 +146,12 @@ const statusInfo = STATUS_MAP[status];
 
   .project-card:hover {
     border-color: #3F3F46;              /* Zinc-700 — hover sutil */
+  }
+
+  /* Contenido por encima del wireframe interno */
+  .project-card > :not(:global(.art-wire)) {
+    position: relative;
+    z-index: 1;
   }
 
   /* ── Cabecera ────────────────────────────────────────────────────────── */

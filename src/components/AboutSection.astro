@@ -1,0 +1,81 @@
+<section id="sobre-mi" class="about-section">
+  <div class="about-section__content">
+    <header class="about-section__header">
+      <p class="about-section__label">Perfil</p>
+      <h2 class="about-section__title">Sobre mí</h2>
+    </header>
+
+    <div class="about-section__body">
+      <p class="about-section__lead">
+        Soy <strong>Frontend Lead&nbsp;/&nbsp;Product Engineer</strong> con más de
+        una década construyendo productos digitales — desde MVPs hasta plataformas
+        con millones de usuarios.
+      </p>
+      <p class="about-section__text">
+        Me especializo en arquitecturas de interfaces de alto rendimiento,
+        diseño de sistemas escalables y la frontera entre ingeniería y producto.
+        Este sitio es mi CV vivo: proyectos reales y una bitácora con los
+        problemas que he resuelto en el camino.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section {
+    padding-top: var(--spacing-section, 6rem);
+    padding-bottom: var(--spacing-section, 6rem);
+  }
+
+  .about-section__content {
+    max-width: 65ch;
+  }
+
+  .about-section__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin-bottom: 2rem;
+  }
+
+  .about-section__label {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #14B8A6;
+    margin: 0;
+  }
+
+  .about-section__title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: #EDEDED;
+    margin: 0;
+  }
+
+  .about-section__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .about-section__lead {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: #EDEDED;
+    margin: 0;
+  }
+
+  .about-section__lead strong {
+    font-weight: 500;
+  }
+
+  .about-section__text {
+    font-size: 0.9375rem;
+    line-height: 1.8;
+    color: #A1A1AA;
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,104 @@
+---
+/** Franjas laterales del wireframe — viven en los márgenes, fuera de la columna de lectura. */
+const IMAGE = '/images/hero-cover.jpg';
+---
+
+<div class="page-sides">
+  <div
+    class="page-sides__strip page-sides__strip--left"
+    style={`background-image: url('${IMAGE}')`}
+  ></div>
+  <div
+    class="page-sides__strip page-sides__strip--right"
+    style={`background-image: url('${IMAGE}')`}
+  ></div>
+</div>
+
+<style>
+  /* display:contents — los hijos participan en el grid del Layout */
+  .page-sides {
+    display: contents;
+  }
+
+  .page-sides__strip {
+    display: none;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    filter: brightness(0.5) saturate(0.32) contrast(1.04);
+  }
+
+  /*
+    Solo en viewports con margen real (sidebar 64px + columna 1024px).
+    A partir de ~1280px hay espacio lateral sin invadir el contenido.
+  */
+  @media (min-width: 1280px) {
+    .page-sides__strip {
+      display: block;
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      align-self: start;
+      overflow: hidden;
+    }
+
+    .page-sides__strip--left {
+      grid-column: 1;
+      grid-row: 1;
+      background-size: 420% auto;
+      background-position: 6% 38%;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.34) 0%,
+        rgba(0, 0, 0, 0.14) 55%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.34) 0%,
+        rgba(0, 0, 0, 0.14) 55%,
+        transparent 100%
+      );
+    }
+
+    .page-sides__strip--right {
+      grid-column: 3;
+      grid-row: 1;
+      background-size: 400% auto;
+      background-position: 94% 58%;
+      -webkit-mask-image: linear-gradient(
+        to left,
+        rgba(0, 0, 0, 0.34) 0%,
+        rgba(0, 0, 0, 0.14) 55%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to left,
+        rgba(0, 0, 0, 0.34) 0%,
+        rgba(0, 0, 0, 0.14) 55%,
+        transparent 100%
+      );
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .page-sides__strip--left {
+      background-position: 4% 42%;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.38) 0%,
+        rgba(0, 0, 0, 0.12) 50%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.38) 0%,
+        rgba(0, 0, 0, 0.12) 50%,
+        transparent 100%
+      );
+    }
+
+    .page-sides__strip--right {
+      background-position: 96% 52%;
+    }
+  }
+</style>

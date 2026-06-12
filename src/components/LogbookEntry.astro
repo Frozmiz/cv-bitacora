@@ -1,11 +1,17 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import ArticleWireframe from './ArticleWireframe.astro';
 
 interface Props {
   entry: CollectionEntry<'logbook'>;
+  index?: number;
 }
 
-const { entry } = Astro.props;
+const LOGBOOK_CORNERS = ['tr', 'br'] as const;
+
+const { entry, index = 0 } = Astro.props;
+const corner = LOGBOOK_CORNERS[index % LOGBOOK_CORNERS.length];
+const crop = ((index % 2) + 2) as 2 | 3;
 const { date, context, technologies, error, research, solution, learning } = entry.data;
 
 /** Formatea la fecha en español: "10 jun 2026" */
@@ -30,6 +36,7 @@ function parseInlineCode(text: string): string {
 ---
 
 <article class="lb-entry" aria-label={`Entrada del ${dateFormatted}: ${context}`}>
+  <ArticleWireframe corner={corner} intensity="soft" crop={crop} />
 
   <!-- Nodo circular sobre la línea del timeline -->
   <span class="lb-entry__node" aria-hidden="true"></span>
@@ -97,8 +104,14 @@ function parseInlineCode(text: string): string {
   /* ── Entrada principal ───────────────────────────────────────────────── */
   .lb-entry {
     position: relative;
+    overflow: hidden;
     padding-left: 2rem;         /* espacio entre la línea y el contenido */
     padding-bottom: 3.5rem;     /* separación entre entradas */
+  }
+
+  .lb-entry > :not(:global(.art-wire)) {
+    position: relative;
+    z-index: 1;
   }
 
   /* ── Nodo circular sobre la línea ───────────────────────────────────── */

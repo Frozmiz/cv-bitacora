@@ -1,0 +1,140 @@
+---
+/**
+ * Recorte del wireframe dentro de un <article>.
+ * Esquinas alternadas + intensidad para no repetir el mismo patrón.
+ */
+interface Props {
+  corner: 'tr' | 'tl' | 'br' | 'bl';
+  intensity?: 'soft' | 'medium';
+  /** Variante de recorte sobre la imagen base (0–3) */
+  crop?: 0 | 1 | 2 | 3;
+}
+
+const { corner, intensity = 'soft', crop = 0 } = Astro.props;
+
+const IMAGE = '/images/hero-cover.jpg';
+
+const CROP_POSITIONS = [
+  '76% 22%',
+  '18% 78%',
+  '88% 68%',
+  '32% 35%',
+] as const;
+---
+
+<div
+  class:list={['art-wire', `art-wire--${corner}`, `art-wire--${intensity}`]}
+  style={`background-image: url('${IMAGE}'); background-position: ${CROP_POSITIONS[crop]}`}
+  aria-hidden="true"
+></div>
+
+<style>
+  .art-wire {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-size: 290% auto;
+    filter: brightness(0.52) saturate(0.34) contrast(1.04);
+  }
+
+  .art-wire--tr { top: -16%; right: -11%; width: 58%; height: 68%; }
+  .art-wire--tl { top: -16%; left:  -11%; width: 52%; height: 62%; }
+  .art-wire--br { bottom: -12%; right: -10%; width: 50%; height: 58%; }
+  .art-wire--bl { bottom: -12%; left:  -10%; width: 48%; height: 55%; }
+
+  .art-wire--soft {
+    -webkit-mask-image: radial-gradient(
+      ellipse 68% 62% at 58% 38%,
+      rgba(0, 0, 0, 0.28) 0%,
+      transparent 80%
+    );
+    mask-image: radial-gradient(
+      ellipse 68% 62% at 58% 38%,
+      rgba(0, 0, 0, 0.28) 0%,
+      transparent 80%
+    );
+  }
+
+  .art-wire--medium {
+    -webkit-mask-image: radial-gradient(
+      ellipse 68% 62% at 58% 38%,
+      rgba(0, 0, 0, 0.44) 0%,
+      transparent 78%
+    );
+    mask-image: radial-gradient(
+      ellipse 68% 62% at 58% 38%,
+      rgba(0, 0, 0, 0.44) 0%,
+      transparent 78%
+    );
+  }
+
+  /* Ajuste del foco de la máscara según esquina */
+  .art-wire--tl.art-wire--soft,
+  .art-wire--tl.art-wire--medium {
+    -webkit-mask-image: radial-gradient(
+      ellipse 68% 62% at 38% 38%,
+      rgba(0, 0, 0, 0.28) 0%,
+      transparent 80%
+    );
+    mask-image: radial-gradient(
+      ellipse 68% 62% at 38% 38%,
+      rgba(0, 0, 0, 0.28) 0%,
+      transparent 80%
+    );
+  }
+
+  .art-wire--tl.art-wire--medium {
+    -webkit-mask-image: radial-gradient(
+      ellipse 68% 62% at 38% 38%,
+      rgba(0, 0, 0, 0.44) 0%,
+      transparent 78%
+    );
+    mask-image: radial-gradient(
+      ellipse 68% 62% at 38% 38%,
+      rgba(0, 0, 0, 0.44) 0%,
+      transparent 78%
+    );
+  }
+
+  .art-wire--br.art-wire--soft,
+  .art-wire--br.art-wire--medium {
+    -webkit-mask-image: radial-gradient(
+      ellipse 65% 58% at 62% 62%,
+      rgba(0, 0, 0, 0.26) 0%,
+      transparent 82%
+    );
+    mask-image: radial-gradient(
+      ellipse 65% 58% at 62% 62%,
+      rgba(0, 0, 0, 0.26) 0%,
+      transparent 82%
+    );
+  }
+
+  .art-wire--br.art-wire--medium {
+    -webkit-mask-image: radial-gradient(
+      ellipse 65% 58% at 62% 62%,
+      rgba(0, 0, 0, 0.4) 0%,
+      transparent 80%
+    );
+    mask-image: radial-gradient(
+      ellipse 65% 58% at 62% 62%,
+      rgba(0, 0, 0, 0.4) 0%,
+      transparent 80%
+    );
+  }
+
+  .art-wire--bl.art-wire--soft,
+  .art-wire--bl.art-wire--medium {
+    -webkit-mask-image: radial-gradient(
+      ellipse 62% 55% at 35% 65%,
+      rgba(0, 0, 0, 0.24) 0%,
+      transparent 82%
+    );
+    mask-image: radial-gradient(
+      ellipse 62% 55% at 35% 65%,
+      rgba(0, 0, 0, 0.24) 0%,
+      transparent 82%
+    );
+  }
+</style>

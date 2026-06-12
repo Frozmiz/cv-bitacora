@@ -24,7 +24,6 @@ const searchIndex = JSON.stringify(
 ---
 
 <section id="bitacora" class="logbook-section">
-
   <!-- Encabezado de sección -->
   <header class="logbook-section__header">
     <p class="logbook-section__label">Registro técnico</p>
@@ -43,7 +42,7 @@ const searchIndex = JSON.stringify(
     no sobrepase el último nodo (overflow: hidden en el ul).
   -->
   {entries.length > 0 ? (
-    <>
+    <div class="logbook-section__body">
       <LogbookSearch index={searchIndex} />
 
       <ul
@@ -59,11 +58,11 @@ const searchIndex = JSON.stringify(
             ]}
             data-entry-id={entry.id}
           >
-            <LogbookEntry entry={entry} />
+            <LogbookEntry entry={entry} index={index} />
           </li>
         ))}
       </ul>
-    </>
+    </div>
   ) : (
     <p class="logbook-section__empty">
       Aún no hay entradas en la bitácora.

@@ -15,7 +15,6 @@ const projects = (await getCollection('projects')).sort(
 ---
 
 <section id="proyectos" class="projects-section">
-
   <!-- Encabezado de sección -->
   <header class="projects-section__header">
     <p class="projects-section__label">Trabajo seleccionado</p>
@@ -34,7 +33,7 @@ const projects = (await getCollection('projects')).sort(
   <ul class="projects-grid" role="list" aria-label="Lista de proyectos">
     {projects.map((project, index) => (
       <li class:list={['projects-grid__item', { 'projects-grid__item--featured': index === 0 }]}>
-        <ProjectCard project={project} featured={index === 0} />
+        <ProjectCard project={project} featured={index === 0} index={index} />
       </li>
     ))}
   </ul>

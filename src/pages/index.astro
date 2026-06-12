@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
+import AboutSection from '../components/AboutSection.astro';
 import ProjectsSection from '../components/ProjectsSection.astro';
 import LogbookSection from '../components/LogbookSection.astro';
 ---
@@ -13,15 +14,7 @@ import LogbookSection from '../components/LogbookSection.astro';
   <Hero slot="full-bleed" />
 
   <!-- ── Sobre mí ──────────────────────────────────────────────────────── -->
-  <section
-    id="sobre-mi"
-    style="padding-top: var(--spacing-section); padding-bottom: var(--spacing-section);"
-  >
-    <h2 class="text-2xl font-semibold mb-8">Sobre mí</h2>
-    <p style="color: #A1A1AA; line-height: 1.8; max-width: 65ch;">
-      Placeholder — esta sección se completará con el componente Hero.
-    </p>
-  </section>
+  <AboutSection />
 
   <!-- ── Proyectos ─────────────────────────────────────────────────────── -->
   <ProjectsSection />
