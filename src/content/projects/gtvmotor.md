@@ -1,18 +1,21 @@
 ---
 title: GTVMOTOR
 status: En Desarrollo
-description: Plataforma web para la gestión integral de concesionarias de vehículos, con módulos de inventario, reservas de citas y panel de administración.
+description: Plataforma integral para concesionarias de vehículos (compra, alquiler, lavado, tasación y panel administrativo), con SSR híbrido y despliegue en producción en AWS EC2.
 technologies:
-  - Angular
+  - Angular 18
   - NestJS
+  - Bun
   - PostgreSQL
-  - TypeORM
-  - TailwindCSS
-problem: Las concesionarias dependían de hojas de cálculo y llamadas telefónicas para gestionar su inventario y agendar citas de servicio, generando errores de sincronización y pérdida de clientes potenciales. GTVMOTOR centraliza todo el flujo operativo en una sola plataforma con roles diferenciados (admin, agente, cliente).
+  - Prisma
+  - Tailwind CSS
+  - SSR
+problem: Las concesionarias gestionaban inventario, reservas y tasaciones con hojas de cálculo y llamadas telefónicas, generando desincronización de stock, conflictos de agenda y pérdida de leads. GTVMOTOR unifica el flujo operativo con roles diferenciados (admin, agente, cliente) en un solo producto.
 links:
   github: https://github.com/frozmiz/gtvmotor
+  demo: https://gtvmotor.es
 ---
 
-GTVMOTOR es una aplicación full-stack diseñada para modernizar la operativa interna de concesionarias de automóviles. El frontend en Angular consume una API REST construida con NestJS, con autenticación basada en JWT y gestión de roles por guardia de rutas.
+Multirepo (Master / Backend / Frontend) con API NestJS sobre runtime Bun y frontend Angular 100 % standalone: signals, interceptores funcionales, Lucide y Clean Architecture por features lazy-loaded.
 
-El módulo de inventario permite filtrar vehículos por marca, modelo, año y estado de disponibilidad. El módulo de citas integra un calendario con detección de conflictos de horario en tiempo real.
+En producción: EC2 Ubuntu + Elastic IP, PostgreSQL 16 en Docker con volumen persistente, Nginx como reverse proxy y servidor estático híbrido (browser + SSR en `:4000` vía systemd). Dominio canónico `gtvmotor.es` con redirecciones 301 y SSL Let's Encrypt. Runbook operativo documentado en `SPECIFICATION_PROD.md`. Migración a Angular 21 en curso.
