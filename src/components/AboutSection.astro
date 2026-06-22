@@ -1,3 +1,7 @@
+---
+import { cv } from '../config/site';
+---
+
 <section id="sobre-mi" class="about-section">
   <div class="about-section__content">
     <header class="about-section__header">
@@ -8,7 +12,7 @@
     <div class="about-section__body">
       <p class="about-section__lead">
         Soy <strong>Frontend Lead&nbsp;/&nbsp;Product Engineer</strong> con más de
-        una década construyendo productos digitales — desde MVPs hasta plataformas
+        una década construyendo productos digitales, desde MVPs hasta plataformas
         con millones de usuarios.
       </p>
       <p class="about-section__text">
@@ -17,6 +21,15 @@
         Este sitio es mi CV vivo: proyectos reales y una bitácora con los
         problemas que he resuelto en el camino.
       </p>
+
+      <div class="about-section__actions">
+        <a href="/cv" class="about-section__cv-link">
+          Ver currículum en PDF
+        </a>
+        <a href={cv.file} download class="about-section__cv-download">
+          Descargar
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -77,5 +90,54 @@
     line-height: 1.8;
     color: #A1A1AA;
     margin: 0;
+  }
+
+  .about-section__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+  }
+
+  .about-section__cv-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.625rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: #EDEDED;
+    color: #0A0A0A;
+    text-decoration: none;
+    transition: opacity 150ms ease;
+  }
+
+  .about-section__cv-link:hover {
+    opacity: 0.88;
+  }
+
+  .about-section__cv-download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.625rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: var(--font-mono, monospace);
+    color: #A1A1AA;
+    border: 1px solid #27272A;
+    text-decoration: none;
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  }
+
+  .about-section__cv-download:hover {
+    background-color: #1A1A1A;
+    color: #EDEDED;
+    border-color: #3F3F46;
   }
 </style>

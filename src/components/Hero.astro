@@ -37,9 +37,9 @@ const techStack = [
 
   <!--
     Overlays:
-    · Acento teal sutil (DESIGN §6 — glow permitido solo en Hero)
-    · Vignette — oscurece bordes y centro para legibilidad del texto
-    · Text-guard — contraste mínimo sobre las líneas blancas del wireframe
+    · Acento teal sutil (DESIGN §6: glow permitido solo en Hero)
+    · Vignette: oscurece bordes y centro para legibilidad del texto
+    · Text-guard: contraste mínimo sobre las líneas blancas del wireframe
   -->
   <div class="hero__accent-glow" aria-hidden="true"></div>
   <div class="hero__vignette"    aria-hidden="true"></div>
@@ -54,13 +54,13 @@ const techStack = [
       Disponible para proyectos
     </p>
 
-    <!-- Nombre — firma de autor entre el badge y el titular -->
+    <!-- Nombre: firma de autor entre el badge y el titular -->
     <p class="hero__name" aria-label="Alejandro González López">
-      <span class="hero__name-line" aria-hidden="true">——</span>
+      <span class="hero__name-line" aria-hidden="true">· · ·</span>
       ALEJANDRO GONZALEZ LOPEZ
     </p>
 
-    <!-- Titular — dos líneas, segunda en muted -->
+    <!-- Titular: dos líneas, segunda en muted -->
     <h1 class="hero__title">
       <span class="hero__title-line">Construyendo</span>
       <span class="hero__title-line">interfaces</span>
@@ -91,12 +91,13 @@ const techStack = [
     <!-- CTAs -->
     <div class="hero__ctas">
       <a href="#proyectos" class="hero__cta hero__cta--primary">Ver Proyectos</a>
+      <a href="/cv" class="hero__cta hero__cta--ghost">Ver CV</a>
       <a href="mailto:contacto@frozmiz.dev" class="hero__cta hero__cta--ghost">Contactar</a>
     </div>
 
   </div>
 
-  <!-- Indicador de scroll — patrón de profundidad UX ──────────────────── -->
+  <!-- Indicador de scroll: patrón de profundidad UX ──────────────────── -->
   <div class="hero__scroll" aria-hidden="true">
     <span class="hero__scroll-label">scroll</span>
     <span class="hero__scroll-line"></span>
@@ -131,14 +132,14 @@ const techStack = [
     display: block;
     /*
       Atenúa las líneas blancas del wireframe para que no compitan
-      con el titular. El fondo ya es oscuro — solo bajamos brillo y saturación.
+      con el titular. El fondo ya es oscuro: solo bajamos brillo y saturación.
     */
     filter: brightness(0.62) saturate(0.45) contrast(1.08);
     transform: scale(1.04);
     transform-origin: center center;
   }
 
-  /* ── Glow teal — DESIGN §6, opacidad ~10% ───────────────────────────── */
+  /* ── Glow teal: DESIGN §6, opacidad ~10% ───────────────────────────── */
   .hero__accent-glow {
     position: absolute;
     inset: 0;
@@ -151,7 +152,7 @@ const techStack = [
     pointer-events: none;
   }
 
-  /* ── Vignette — funde bordes con #0A0A0A y oscurece el centro ─────── */
+  /* ── Vignette: funde bordes con #0A0A0A y oscurece el centro ─────── */
   .hero__vignette {
     position: absolute;
     inset: 0;
@@ -174,7 +175,7 @@ const techStack = [
   }
 
   /*
-    Text-guard: las líneas del wireframe son blancas — esta capa garantiza
+    Text-guard: las líneas del wireframe son blancas: esta capa garantiza
     contraste del titular aunque la red 3D pase por detrás del contenido.
   */
   .hero__text-guard {
@@ -250,9 +251,9 @@ const techStack = [
     font-family: var(--font-mono, monospace);
     font-size: clamp(0.75rem, 1.2vw, 0.9375rem);
     font-weight: 400;
-    letter-spacing: 0.32em;                /* tracking ultra-abierto — firma */
+    letter-spacing: 0.32em;                /* tracking ultra-abierto: firma */
     text-transform: uppercase;
-    color: #14B8A6;                        /* acento primario — diferenciador */
+    color: #14B8A6;                        /* acento primario: diferenciador */
   }
 
   .hero__name-line {
@@ -261,7 +262,7 @@ const techStack = [
     flex-shrink: 0;
   }
 
-  /* ── Titular — tres líneas con jerarquía tipográfica ─────────────────── */
+  /* ── Titular: tres líneas con jerarquía tipográfica ─────────────────── */
   .hero__title {
     display: flex;
     flex-direction: column;
@@ -279,7 +280,7 @@ const techStack = [
     color: #EDEDED;
   }
 
-  /* Tercera línea — acento teal: legible sobre el wireframe y cierre del titular */
+  /* Tercera línea: acento teal: legible sobre el wireframe y cierre del titular */
   .hero__title-muted {
     color: #14B8A6;
   }
@@ -429,7 +430,7 @@ const techStack = [
       justify-content: flex-start;
     }
 
-    /* En mobile el wireframe compite más con el texto — overlays más fuertes */
+    /* En mobile el wireframe compite más con el texto: overlays más fuertes */
     .hero__bg-img {
       object-position: 60% center;
       filter: brightness(0.55) saturate(0.4) contrast(1.05);

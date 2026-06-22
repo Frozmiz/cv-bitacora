@@ -1,0 +1,173 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import Layout from '../layouts/Layout.astro';
+import { cv } from '../config/site';
+
+const pdfPublicPath = cv.file.replace(/^\//, '');
+const pdfDiskPath = path.join(process.cwd(), 'public', pdfPublicPath);
+const pdfAvailable = fs.existsSync(pdfDiskPath);
+---
+
+<Layout
+  title="CV en PDF"
+  description={`Currículum de ${cv.label} en formato PDF.`}
+>
+  <section class="cv-page" aria-labelledby="cv-page-title">
+    <header class="cv-page__header">
+      <a href="/" class="cv-page__back">← Volver al portfolio</a>
+      <h1 id="cv-page-title" class="cv-page__title">Currículum vitae</h1>
+      <p class="cv-page__subtitle">{cv.label}</p>
+    </header>
+
+    {pdfAvailable ? (
+      <div class="cv-page__viewer">
+        <div class="cv-page__toolbar">
+          <a href={cv.file} target="_blank" rel="noopener noreferrer" class="cv-page__btn cv-page__btn--primary">
+            Abrir en pestaña nueva
+          </a>
+          <a href={cv.file} download class="cv-page__btn cv-page__btn--ghost">
+            Descargar PDF
+          </a>
+        </div>
+        <iframe
+          class="cv-page__frame"
+          src={`${cv.file}#view=FitH`}
+          title={`CV de ${cv.label}`}
+        />
+      </div>
+    ) : (
+      <div class="cv-page__missing" role="status">
+        <p class="cv-page__missing-title">PDF no encontrado</p>
+        <p class="cv-page__missing-text">
+          Añade tu currículum en
+          <code class="cv-page__code">public{cv.file}</code>
+          y vuelve a desplegar el sitio.
+        </p>
+      </div>
+    )}
+  </section>
+</Layout>
+
+<style>
+  .cv-page {
+    padding-top: var(--spacing-section, 6rem);
+    padding-bottom: var(--spacing-section, 6rem);
+  }
+
+  .cv-page__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .cv-page__back {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8125rem;
+    color: #A1A1AA;
+    text-decoration: none;
+    width: fit-content;
+    transition: color 150ms ease;
+  }
+
+  .cv-page__back:hover {
+    color: #14B8A6;
+  }
+
+  .cv-page__title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: #EDEDED;
+    margin: 0;
+  }
+
+  .cv-page__subtitle {
+    font-size: 0.9375rem;
+    color: #A1A1AA;
+    margin: 0;
+  }
+
+  .cv-page__viewer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cv-page__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .cv-page__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.625rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 150ms ease, background-color 150ms ease, color 150ms ease;
+  }
+
+  .cv-page__btn--primary {
+    background-color: #EDEDED;
+    color: #0A0A0A;
+  }
+
+  .cv-page__btn--primary:hover {
+    opacity: 0.88;
+  }
+
+  .cv-page__btn--ghost {
+    background-color: transparent;
+    color: #A1A1AA;
+    border: 1px solid #27272A;
+  }
+
+  .cv-page__btn--ghost:hover {
+    background-color: #1A1A1A;
+    color: #EDEDED;
+    border-color: #3F3F46;
+  }
+
+  .cv-page__frame {
+    width: 100%;
+    min-height: calc(100dvh - 18rem);
+    height: 80vh;
+    border: 1px solid #27272A;
+    border-radius: 0.75rem;
+    background-color: #111111;
+  }
+
+  .cv-page__missing {
+    background-color: #111111;
+    border: 1px solid #27272A;
+    border-radius: 0.75rem;
+    padding: 2rem;
+  }
+
+  .cv-page__missing-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #EDEDED;
+    margin: 0 0 0.75rem;
+  }
+
+  .cv-page__missing-text {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: #A1A1AA;
+    margin: 0;
+  }
+
+  .cv-page__code {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.875em;
+    color: #14B8A6;
+  }
+</style>
