@@ -1,11 +1,12 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
 const landingSchema = z.object({
   id: z.string(),
   name: z.string(),
   purpose: z.string(),
-  url: z.string().url().optional(),
+  url: z.url().optional(),
   technologies: z.array(z.string()).optional(),
   learning: z.string(),
 });
@@ -22,8 +23,8 @@ const projects = defineCollection({
     landings: z.array(landingSchema).optional(),
     links: z
       .object({
-        github: z.string().url().optional(),
-        demo: z.string().url().optional(),
+        github: z.url().optional(),
+        demo: z.url().optional(),
       })
       .optional(),
   }),
