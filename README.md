@@ -4,10 +4,10 @@ CV interactivo y bitácora de ingeniería. Portfolio personal construido con Ast
 
 ## Stack
 
-- **[Astro 6](https://astro.build)** — Framework de contenido estático con Content Layer API
-- **[Tailwind CSS v4](https://tailwindcss.com)** — Estilos con design tokens en `@theme`
-- **[Zod v4](https://zod.dev)** — Validación de esquemas para las colecciones de contenido
-- **[Fuse.js](https://fusejs.io)** — Búsqueda difusa (preparada para la bitácora)
+- **[Astro 6](https://astro.build)**: Framework de contenido estático con Content Layer API
+- **[Tailwind CSS v4](https://tailwindcss.com)**: Estilos con design tokens en `@theme`
+- **[Zod v4](https://zod.dev)**: Validación de esquemas para las colecciones de contenido
+- **[Fuse.js](https://fusejs.io)**: Búsqueda difusa (preparada para la bitácora)
 
 ## Estructura
 
@@ -34,7 +34,7 @@ src/
 
 El contenido vive en `src/content/` como archivos Markdown con frontmatter validado por Zod.
 
-**Añadir un proyecto** — crear `src/content/projects/nombre.md`:
+**Añadir un proyecto**: crear `src/content/projects/nombre.md`:
 
 ```md
 ---
@@ -49,7 +49,7 @@ links:
 ---
 ```
 
-**Añadir entrada de bitácora** — crear `src/content/logbook/YYYY-MM-DD-slug.md`:
+**Añadir entrada de bitácora**: crear `src/content/logbook/YYYY-MM-DD-slug.md`:
 
 ```md
 ---
@@ -78,7 +78,7 @@ Todos los comandos se ejecutan desde la raíz del proyecto con **pnpm**:
 
 Las directrices visuales están documentadas en [`DESIGN.md`](./DESIGN.md). Resumen:
 
-- Modo oscuro nativo — fondo base `#0A0A0A`
+- Modo oscuro nativo: fondo base `#0A0A0A`
 - Tipografía: **Inter** para UI, **JetBrains Mono** para código y metadatos
-- Diseño plano (flat) — sin sombras, jerarquía visual por colores de surface y bordes finos
+- Diseño plano (flat): sin sombras, jerarquía visual por colores de surface y bordes finos
 - Acento primario `#14B8A6` (teal), acento secundario `#8B5CF6` (violeta)

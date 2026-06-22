@@ -29,7 +29,7 @@
   --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
 
   /* Spacing scale (multiples of 4px) */
-  --spacing-section: 6rem; /* 96px — separación mínima entre secciones */
+  --spacing-section: 6rem; /* 96px: separación mínima entre secciones */
 }
 
 /* ─── Base reset ─────────────────────────────────────────────────────────── */
@@ -60,7 +60,7 @@
     font-size: 0.9em;
   }
 
-  /* Sin sombras paralelas — jerarquía solo por surface y bordes */
+  /* Sin sombras paralelas: jerarquía solo por surface y bordes */
   * {
     box-shadow: none !important;
   }

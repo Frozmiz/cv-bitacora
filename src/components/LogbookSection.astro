@@ -9,7 +9,7 @@ const entries = (await getCollection('logbook')).sort(
 );
 
 /**
- * Índice de búsqueda — solo los campos necesarios para Fuse.js.
+ * Índice de búsqueda: solo los campos necesarios para Fuse.js.
  * Se serializa a JSON y viaja al cliente como data attribute.
  */
 const searchIndex = JSON.stringify(
@@ -129,7 +129,7 @@ const searchIndex = JSON.stringify(
       margin-left separa la línea del borde de la página.
     */
     border-left: 1px solid #27272A;
-    margin-left: 0.3125rem;    /* 5px — centra la línea bajo los nodos */
+    margin-left: 0.3125rem;    /* 5px: centra la línea bajo los nodos */
     overflow: hidden;          /* evita que la línea sobrepase el último nodo */
   }
 

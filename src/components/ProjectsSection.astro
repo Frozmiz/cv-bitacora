@@ -79,7 +79,7 @@ const projects = (await getCollection('projects')).sort(
     padding: 0;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;                    /* 24px — múltiplo de 4px */
+    gap: 1.5rem;                    /* 24px: múltiplo de 4px */
   }
 
   /* md: 2 columnas */
@@ -94,7 +94,7 @@ const projects = (await getCollection('projects')).sort(
     }
   }
 
-  /* lg: 3 columnas — asimetría Bento */
+  /* lg: 3 columnas: asimetría Bento */
   @media (min-width: 1024px) {
     .projects-grid {
       grid-template-columns: repeat(3, 1fr);
