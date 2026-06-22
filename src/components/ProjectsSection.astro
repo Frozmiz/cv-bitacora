@@ -1,17 +1,27 @@
 ---
 import { getCollection } from 'astro:content';
 import ProjectCard from './ProjectCard.astro';
+import SloworkLandings from './SloworkLandings.astro';
 
 /**
- * Ordena los proyectos por estado de prioridad:
- * "En Desarrollo" primero → "Mantenimiento" → "Completado"
+ * Ordena los proyectos: featured primero, luego por estado
+ * ("En Desarrollo" → "Mantenimiento" → "Completado").
  * El primero de la lista será el featured (2 columnas en el grid Bento).
  */
 const STATUS_ORDER = { 'En Desarrollo': 0, 'Mantenimiento': 1, 'Completado': 2 };
 
-const projects = (await getCollection('projects')).sort(
-  (a, b) => STATUS_ORDER[a.data.status] - STATUS_ORDER[b.data.status],
-);
+const projects = (await getCollection('projects')).sort((a, b) => {
+  const featuredDiff = Number(b.data.featured ?? false) - Number(a.data.featured ?? false);
+  if (featuredDiff !== 0) return featuredDiff;
+
+  const statusDiff = STATUS_ORDER[a.data.status] - STATUS_ORDER[b.data.status];
+  if (statusDiff !== 0) return statusDiff;
+
+  return a.data.title.localeCompare(b.data.title, 'es');
+});
+
+const featuredProject = projects[0];
+const sloworkLandings = featuredProject?.data.landings;
 ---
 
 <section id="proyectos" class="projects-section">
@@ -34,6 +44,9 @@ const projects = (await getCollection('projects')).sort(
     {projects.map((project, index) => (
       <li class:list={['projects-grid__item', { 'projects-grid__item--featured': index === 0 }]}>
         <ProjectCard project={project} featured={index === 0} index={index} />
+        {index === 0 && project.data.landings && project.data.landings.length > 0 && (
+          <SloworkLandings landings={project.data.landings} />
+        )}
       </li>
     ))}
   </ul>
@@ -110,5 +123,11 @@ const projects = (await getCollection('projects')).sort(
     /* Necesario para que ProjectCard con height:100% ocupe el item completo */
     display: flex;
     flex-direction: column;
+    gap: 0;
+  }
+
+  .projects-grid__item--featured {
+    /* La sección de landings vive dentro del item destacado a ancho completo */
+    align-self: stretch;
   }
 </style>
