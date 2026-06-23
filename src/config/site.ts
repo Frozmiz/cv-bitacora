@@ -7,9 +7,9 @@ export const site = {
 
 /**
  * CV en PDF servido desde `public/`.
- * Archivo: public/cv/CV_Alejandro_Gonzalez_Frontend_Product_Engineer_ES_v6.pdf
+ * Archivo: public/cv/CV_Alejandro_Gonzalez_Frontend_Product_Engineer_ES_v9.pdf
  */
 export const cv = {
-  file: '/cv/CV_Alejandro_Gonzalez_Frontend_Product_Engineer_ES_v6.pdf',
+  file: '/cv/CV_Alejandro_Gonzalez_Frontend_Product_Engineer_ES_v9.pdf',
   label: 'Alejandro González López',
 } as const;
