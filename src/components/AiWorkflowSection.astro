@@ -1,0 +1,212 @@
+---
+import { aiWorkflow } from '../config/ai-workflow';
+---
+
+<section class="ai-workflow" aria-labelledby="ai-workflow-title">
+  <header class="ai-workflow__header">
+    <p class="ai-workflow__label">{aiWorkflow.label}</p>
+    <h3 id="ai-workflow-title" class="ai-workflow__title">{aiWorkflow.title}</h3>
+    <p class="ai-workflow__intro">{aiWorkflow.intro}</p>
+  </header>
+
+  <ol class="ai-workflow__grid" role="list">
+    {aiWorkflow.pillars.map((pillar, index) => (
+      <li class="ai-workflow__item">
+        <article
+          class="ai-workflow__card"
+          aria-labelledby={`ai-pillar-${pillar.id}-title`}
+        >
+          <header class="ai-workflow__card-header">
+            <span class="ai-workflow__index" aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h4 id={`ai-pillar-${pillar.id}-title`} class="ai-workflow__card-title">
+              {pillar.title}
+            </h4>
+          </header>
+
+          <p class="ai-workflow__card-text">{pillar.text}</p>
+
+          <footer class="ai-workflow__card-footer">
+            <code class="ai-workflow__term">{pillar.term}</code>
+            <ul class="ai-workflow__pills" aria-label={`Herramientas de ${pillar.title}`}>
+              {pillar.pills.map((pill) => (
+                <li>
+                  {'href' in pill && pill.href ? (
+                    <a
+                      href={pill.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="pill ai-workflow__pill-link"
+                    >
+                      {pill.label}
+                    </a>
+                  ) : (
+                    <span class="pill">{pill.label}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </footer>
+        </article>
+      </li>
+    ))}
+  </ol>
+
+  <p class="ai-workflow__closing">{aiWorkflow.closing}</p>
+</section>
+
+<style>
+  .ai-workflow {
+    margin-top: 1.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #27272a;
+  }
+
+  .ai-workflow__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    max-width: 72ch;
+  }
+
+  .ai-workflow__label {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8b5cf6;
+    margin: 0;
+  }
+
+  .ai-workflow__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: #ededed;
+    margin: 0;
+  }
+
+  .ai-workflow__intro {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: #a1a1aa;
+    margin: 0;
+  }
+
+  .ai-workflow__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .ai-workflow__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .ai-workflow__item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ai-workflow__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    height: 100%;
+    background-color: #111111;
+    border: 1px solid #27272a;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    transition: border-color 200ms ease;
+  }
+
+  .ai-workflow__card:hover {
+    border-color: #8b5cf6;
+  }
+
+  .ai-workflow__card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .ai-workflow__index {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.7rem;
+    color: #8b5cf6;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    padding-top: 0.2rem;
+  }
+
+  .ai-workflow__card-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #ededed;
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  .ai-workflow__card-text {
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: #a1a1aa;
+    margin: 0;
+    flex: 1;
+  }
+
+  .ai-workflow__card-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #27272a;
+    margin-top: auto;
+  }
+
+  .ai-workflow__term {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.7rem;
+    color: #8b5cf6;
+    letter-spacing: 0.02em;
+  }
+
+  .ai-workflow__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ai-workflow__pill-link {
+    text-decoration: none;
+    transition:
+      color 150ms ease,
+      border-color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .ai-workflow__pill-link:hover {
+    color: #ededed;
+    border-color: #8b5cf6;
+    background-color: #1a1a1a;
+  }
+
+  .ai-workflow__closing {
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: #a1a1aa;
+    margin: 1.5rem 0 0;
+    max-width: 72ch;
+  }
+</style>
