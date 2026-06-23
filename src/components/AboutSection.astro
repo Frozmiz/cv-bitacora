@@ -1,5 +1,7 @@
 ---
-import { cv } from '../config/site';
+import { cv } from "../config/site";
+import RootsSection from "./RootsSection.astro";
+import AiWorkflowSection from "./AiWorkflowSection.astro";
 ---
 
 <section id="sobre-mi" class="about-section">
@@ -10,22 +12,26 @@ import { cv } from '../config/site';
     </header>
 
     <div class="about-section__body">
-      <p class="about-section__lead">
-        Soy <strong>Frontend Lead&nbsp;/&nbsp;Product Engineer</strong> con más de
-        una década construyendo productos digitales, desde MVPs hasta plataformas
-        con millones de usuarios.
-      </p>
-      <p class="about-section__text">
-        Me especializo en arquitecturas de interfaces de alto rendimiento,
-        diseño de sistemas escalables y la frontera entre ingeniería y producto.
-        Este sitio es mi CV vivo: proyectos reales y una bitácora con los
-        problemas que he resuelto en el camino.
-      </p>
+      <div class="about-section__bio">
+        <p class="about-section__lead">
+          Soy <strong>Frontend Developer&nbsp;/&nbsp;Product Engineer</strong> con varios
+          años construyendo productos digitales: aplicaciones web en producción, MVPs
+          y proyectos propios donde pruebo stack y enfoque.
+        </p>
+        <p class="about-section__text">
+          Me especializo en arquitecturas de interfaces de alto rendimiento,
+          diseño de sistemas escalables y la frontera entre ingeniería y producto.
+          Este sitio es mi CV vivo: proyectos reales y una bitácora con los
+          problemas que he resuelto en el camino.
+        </p>
+      </div>
+
+      <RootsSection />
+
+      <AiWorkflowSection />
 
       <div class="about-section__actions">
-        <a href="/cv" class="about-section__cv-link">
-          Ver currículum en PDF
-        </a>
+        <a href="/cv" class="about-section__cv-link"> Ver currículum en PDF </a>
         <a href={cv.file} download class="about-section__cv-download">
           Descargar
         </a>
@@ -41,7 +47,11 @@ import { cv } from '../config/site';
   }
 
   .about-section__content {
-    max-width: 65ch;
+    max-width: 100%;
+  }
+
+  .about-section__bio {
+    max-width: 72ch;
   }
 
   .about-section__header {
@@ -56,7 +66,7 @@ import { cv } from '../config/site';
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #14B8A6;
+    color: #14b8a6;
     margin: 0;
   }
 
@@ -64,7 +74,7 @@ import { cv } from '../config/site';
     font-size: clamp(1.5rem, 3vw, 2rem);
     font-weight: 600;
     letter-spacing: -0.03em;
-    color: #EDEDED;
+    color: #ededed;
     margin: 0;
   }
 
@@ -77,7 +87,7 @@ import { cv } from '../config/site';
   .about-section__lead {
     font-size: 1.0625rem;
     line-height: 1.75;
-    color: #EDEDED;
+    color: #ededed;
     margin: 0;
   }
 
@@ -88,7 +98,7 @@ import { cv } from '../config/site';
   .about-section__text {
     font-size: 0.9375rem;
     line-height: 1.8;
-    color: #A1A1AA;
+    color: #a1a1aa;
     margin: 0;
   }
 
@@ -109,8 +119,8 @@ import { cv } from '../config/site';
     border-radius: 6px;
     font-size: 0.875rem;
     font-weight: 500;
-    background-color: #EDEDED;
-    color: #0A0A0A;
+    background-color: #ededed;
+    color: #0a0a0a;
     text-decoration: none;
     transition: opacity 150ms ease;
   }
@@ -129,15 +139,18 @@ import { cv } from '../config/site';
     font-size: 0.875rem;
     font-weight: 500;
     font-family: var(--font-mono, monospace);
-    color: #A1A1AA;
-    border: 1px solid #27272A;
+    color: #a1a1aa;
+    border: 1px solid #27272a;
     text-decoration: none;
-    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease;
   }
 
   .about-section__cv-download:hover {
-    background-color: #1A1A1A;
-    color: #EDEDED;
-    border-color: #3F3F46;
+    background-color: #1a1a1a;
+    color: #ededed;
+    border-color: #3f3f46;
   }
 </style>

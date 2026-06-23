@@ -1,0 +1,74 @@
+---
+import { technicalRoots } from '../config/roots';
+---
+
+<div class="mt-16">
+  <h2
+    id="roots-heading"
+    class="m-0 mb-10 font-mono text-sm uppercase tracking-widest text-zinc-400"
+  >
+    Influencias y referentes
+  </h2>
+
+  <div
+    class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 lg:grid-cols-4"
+    role="list"
+    aria-labelledby="roots-heading"
+  >
+    {technicalRoots.map((root) => (
+      <article
+        role="listitem"
+        class="flex h-full flex-col border-t border-zinc-800 pt-6 transition-colors duration-300 hover:border-teal-500/50"
+      >
+        <h3 class="m-0 mb-1 text-base font-medium text-zinc-100">
+          {root.mentor}
+        </h3>
+        <p class="m-0 mb-4 block font-mono text-xs text-teal-500/80">
+          {root.title}
+        </p>
+        <p class="m-0 text-sm leading-relaxed text-zinc-400">
+          {root.description}
+        </p>
+        <a
+          href={root.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="roots-pillar__linkedin mt-auto pt-4"
+          aria-label={`Perfil de LinkedIn de ${root.mentor}`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a-1.998 1.998 0 1 1 0-3.996 1.998 1.998 0 0 1 0 3.996zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+          </svg>
+          LinkedIn
+        </a>
+      </article>
+    ))}
+  </div>
+</div>
+
+<style>
+  .roots-pillar__linkedin {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #a1a1aa;
+    text-decoration: none;
+    transition: color 150ms ease;
+    align-self: flex-start;
+  }
+
+  .roots-pillar__linkedin:hover {
+    color: #14b8a6;
+  }
+</style>
