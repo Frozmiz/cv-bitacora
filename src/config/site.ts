@@ -2,7 +2,7 @@
 
 export const site = {
   name: 'frozmiz.dev',
-  email: 'contacto@frozmiz.dev',
+  email: 'alejandrogl92_it@outlook.es',
 } as const;
 
 /**

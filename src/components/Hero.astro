@@ -2,6 +2,7 @@
 import {
   siAngular, siNestjs, siAstro, siTypescript, siTailwindcss,
 } from 'simple-icons';
+import { site } from '../config/site';
 
 interface Props {
   /** Imagen de fondo del hero. Por defecto: wireframe 3D local. */
@@ -92,7 +93,7 @@ const techStack = [
     <div class="hero__ctas">
       <a href="#proyectos" class="hero__cta hero__cta--primary">Ver Proyectos</a>
       <a href="/cv" class="hero__cta hero__cta--ghost">Ver CV</a>
-      <a href="mailto:contacto@frozmiz.dev" class="hero__cta hero__cta--ghost">Contactar</a>
+      <a href={`mailto:${site.email}`} class="hero__cta hero__cta--ghost">Contactar</a>
     </div>
 
   </div>
