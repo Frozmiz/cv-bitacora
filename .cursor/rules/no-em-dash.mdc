@@ -1,0 +1,22 @@
+---
+description: No usar el carácter de raya larga (—) en textos del proyecto
+alwaysApply: true
+---
+
+# Sin raya larga (—)
+
+**Nunca** uses el carácter `—` (em dash / raya larga) en textos del proyecto: copy de UI, markdown de contenido, comentarios visibles al usuario, README, etc.
+
+## Alternativas
+
+| Evitar | Usar en su lugar |
+|--------|------------------|
+| `bien hecho — componentes claros` | Dos frases, dos puntos, coma o paréntesis |
+| `idea — detalle` | `idea: detalle` o `idea (detalle)` |
+
+## Ejemplos
+
+```
+❌ Me interesa el frontend bien hecho — componentes claros — y trabajar cerca del producto.
+✅ Me interesa el frontend bien hecho: componentes claros, estado predecible y UX que no estorba. También me importa trabajar cerca del producto.
+```
