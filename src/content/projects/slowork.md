@@ -44,6 +44,15 @@ landings:
       - Tailwind CSS v4
       - Static
     learning: "Para funnels acotados, un Astro estático de una ruta con toggle de idioma en cliente evita conflictos de `[lang]` y pantallas en blanco en deploys simples. No todo funnel necesita el mismo motor i18n que el sitio principal."
+  - id: front-portal
+    name: sloWorkFront
+    purpose: Portal Angular 21 para operaciones internas. Panel admin con inbox de pendientes (Creadores + Hosts), badge de notificaciones en sidebar, Apollo Client + NgRx SignalStore y convenciones de UI con Signals, i18n y DaisyUI.
+    technologies:
+      - Angular 21
+      - NgRx SignalStore
+      - Apollo Angular
+      - DaisyUI 5
+    learning: "Al centralizar contadores admin en `AppStore` e inyectar `HostPendingService` en `withMethods`, apareció NG0200: Apollo lee el token del store en su factory y el store dependía de Apollo vía el servicio. Solución: `inject(Injector)` + `get()` perezoso dentro de la acción. Registrado en la bitácora (jun 2026, SignalStore + Apollo)."
 ---
 
 Arquitectura en tres capas: presentación en Vercel (Astro 6 `output: 'server'`, i18n ES/EN, View Transitions), lógica en AWS (`slowork-api` con GraphQL, Sequelize, waitlist/welcome) y datos en RDS.
