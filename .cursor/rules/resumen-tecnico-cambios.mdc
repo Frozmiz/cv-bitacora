@@ -1,0 +1,31 @@
+---
+description: Al cerrar una tarea, resumir cambios de forma técnica y didáctica para que el usuario aprenda
+alwaysApply: true
+---
+
+# Resumen técnico al finalizar
+
+Al terminar **cualquier petición** del usuario, cierra la respuesta con una sección breve titulada **Resumen técnico** (o equivalente claro en español).
+
+## Cuándo aplica
+
+- **Con cambios en código/config/contenido**: obligatorio.
+- **Solo consulta o explicación** (sin editar archivos): resumen de qué se analizó y conclusiones clave.
+- **Tarea bloqueada o sin cambios**: indica qué se intentó y por qué no hubo diff.
+
+## Qué incluir (conciso, técnico, en español)
+
+1. **Qué cambió**: archivos tocados y naturaleza del cambio (schema, componente, estilo, copy, etc.).
+2. **Por qué**: causa raíz o requisito que lo motivó (1-2 frases).
+3. **Cómo**: patrón o técnica usada (API, selector CSS, Custom Element, Zod, etc.).
+4. **Aprendizaje**: 1 patrón reutilizable o trampa a evitar (tabla o viñeta corta si ayuda).
+
+## Límites
+
+- Proporcional: un fix de una línea no necesita párrafos; un feature grande puede usar subsecciones o tabla de archivos.
+- No repetir el diff entero: el usuario debe aprender el **criterio**, no copiar el patch.
+- Sin rayas largas (`—`) en el texto visible del resumen.
+
+## Ejemplo mínimo (tras un fix de CSS)
+
+**Resumen técnico:** Se quitó `overflow: hidden` del contenedor interactivo y se aisó el recorte en un wrapper decorativo. El summary dejó de cortarse a la derecha porque el margen negativo ya no chocaba con el overflow del padre.
