@@ -24,23 +24,34 @@ export interface AiWorkflowConfig {
 
 export const aiWorkflow = {
   label: 'IA en el flujo de trabajo',
-  title: 'Contexto, memoria y aplicación diaria',
+  title: 'Contexto, memoria, tests y aplicación diaria',
   intro:
-    'Mi integración de la IA comenzó con el Spec-Driven Development: definir el qué antes del cómo me llevó a escribir prompts atómicos y contexto acotado. Eso evolucionó hacia Engram para memoria por proyecto y un Cerebro Global sincronizado con Git. Uso la IA como acelerador con reglas, no como sustituto de criterio: contexto persistente, trazabilidad y revisión humana de cada cambio.',
+    'Mi integración de la IA comenzó con Spec-Driven Development: definir el qué antes del cómo me llevó a prompts atómicos y contexto acotado. Eso evolucionó hacia Engram para memoria por proyecto, un Cerebro Global sincronizado con Git (`brain-push` / `brain-pull`) y reglas Cursor por repo (`.cursor/rules/*.mdc`). En features críticas el criterio de éxito de la spec incluye tests: el agente lee `docs/TESTING.md`, genera specs siguiendo patrones del monorepo y ejecuta la suite antes de cerrar. Uso la IA como acelerador con reglas, no como sustituto de criterio.',
   closing:
-    'El objetivo no es escribir más rápido: es mantener contexto, trazabilidad y criterio técnico cuando el asistente cambia en cada sesión.',
+    'El objetivo no es escribir más rápido: es mantener contexto, trazabilidad, tests reproducibles y criterio técnico cuando el asistente cambia en cada sesión. Lo que el agente valida en local, CI lo confirma en cada PR.',
   pillars: [
     {
       id: 'spec-driven',
       title: 'Spec-Driven Development',
-      text: 'Guío a la IA mediante prompts atómicos: una intención por mensaje, sin mezclar refactor, diseño y bugfix en la misma petición. Parto de specs breves (objetivo, restricciones, criterio de éxito) para que el asistente no improvise requisitos.',
+      text: 'Guío al agente con prompts tipo Tech Lead: una intención por mensaje, sin mezclar refactor, diseño y bugfix. La spec incluye objetivo, restricciones, archivos de referencia obligatorios (`.cursor/rules/project.mdc`, `DESIGN.md`) y criterio de éxito verificable (typecheck, lint, tests concretos).',
       term: 'spec-driven',
-      pills: [{ label: 'Cursor' }, { label: 'Prompts' }],
+      pills: [{ label: 'Cursor' }, { label: 'Prompts' }, { label: 'Specs' }],
+    },
+    {
+      id: 'agent-testing',
+      title: 'Testing con el agente',
+      text: 'Automatizo la calidad en el mismo hilo de implementación. El agente investiga el árbol de archivos, aplica patrones de `docs/TESTING.md` (Vitest + Angular Testing Library en web, Jest + Supertest en API), crea helpers reutilizables (`*.testing.ts`) y ejecuta suites acotadas (`ng test --include`, `pnpm --filter api run test`) antes de dar la tarea por cerrada. GitHub Actions replica el gate en cada PR.',
+      term: 'agent-testing',
+      pills: [
+        { label: 'Vitest' },
+        { label: 'Jest' },
+        { label: 'GitHub Actions' },
+      ],
     },
     {
       id: 'engram-memory',
       title: 'Memoria de Proyecto',
-      text: 'Documento decisiones técnicas, ADRs ligeros y aprendizajes de la bitácora en memoria que el agente puede consultar entre sesiones. Lo que resuelvo hoy queda registrado para no repetir el mismo error mañana.',
+      text: 'Documento decisiones técnicas, ADRs ligeros y aprendizajes de la bitácora en Engram. Estrategias de testing, convenciones Angular o incidencias de deploy quedan en `~/.engram/engram.db` y se exportan con `engram sync` para que el agente retome contexto en la siguiente sesión.',
       term: 'engram-memory',
       pills: [
         { label: 'Engram', href: 'https://github.com/Gentleman-Programming/engram' },
@@ -50,16 +61,23 @@ export const aiWorkflow = {
     {
       id: 'cerebro-global',
       title: 'Cerebro Global',
-      text: 'Centralizo mis reglas de desarrollo transversales, convenciones y preferencias de stack en un repositorio único versionado con Git. Cada proyecto hereda el mismo punto de partida y sincronizo cambios con scripts de Bash.',
+      text: 'Centralizo memorias de agente en un repo Git aparte del código del producto (`cerebro-global`). Scripts Bash en `~/.zshrc` (`brain-push`, `brain-pull`, `brain-status`) sincronizan chunks entre la BD local, el export del proyecto y GitHub. Misma memoria en otra máquina sin copiar notas a mano.',
       term: 'cerebro-global',
-      pills: [{ label: 'Git' }, { label: 'Bash' }],
+      pills: [
+        { label: 'Git' },
+        { label: 'Bash' },
+        {
+          label: 'cerebro-global',
+          href: 'https://github.com/Frozmiz/cerebro-global',
+        },
+      ],
     },
     {
       id: 'diff-review',
       title: 'Revisión y Control',
-      text: 'Mantengo el criterio de producto y la responsabilidad final del código que mergeo. Reviso diff, ejecuto el proyecto localmente y valido que la solución encaja con la spec antes de dar por cerrada una tarea.',
+      text: 'Mantengo el criterio de producto y la responsabilidad final del código que mergeo. Reviso diff, corro lint/typecheck/tests en local y valido que la solución encaja con la spec. Las reglas del repo marcan qué es obligatorio testear (auth, permisos, dinero, validaciones); el resto no se fuerza por inercia.',
       term: 'diff-review',
-      pills: [{ label: 'Code Review' }],
+      pills: [{ label: 'Code Review' }, { label: 'CI' }],
     },
   ],
 } as const satisfies AiWorkflowConfig;
