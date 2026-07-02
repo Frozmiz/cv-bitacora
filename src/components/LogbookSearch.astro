@@ -35,7 +35,7 @@ const { index } = Astro.props;
     <input
       type="search"
       class="ls-input"
-      placeholder="> Buscar por error, tecnología o contexto..."
+      placeholder="> Buscar por titular, error o tecnología..."
       aria-label="Buscar en la bitácora"
       autocomplete="off"
       spellcheck="false"
@@ -55,43 +55,15 @@ const { index } = Astro.props;
 </logbook-search>
 
 <script>
-  import Fuse from 'fuse.js';
-
-  interface SearchItem {
-    id: string;
-    context: string;
-    error: string;
-    technologies: string[];
-    solution: string;
-  }
-
   class LogbookSearch extends HTMLElement {
-    #fuse: Fuse<SearchItem> | null = null;
     /** <li data-entry-id="..."> elements in the page */
     #entries: NodeListOf<HTMLElement> | null = null;
     #countEl: HTMLElement | null = null;
     #input: HTMLInputElement | null = null;
 
     connectedCallback() {
-      const raw = this.dataset.index;
-      if (!raw) return;
+      if (!this.dataset.index) return;
 
-      const data = JSON.parse(raw) as SearchItem[];
-
-      this.#fuse = new Fuse(data, {
-        keys: [
-          { name: 'context',      weight: 0.3 },
-          { name: 'error',        weight: 0.35 },
-          { name: 'technologies', weight: 0.2 },
-          { name: 'solution',     weight: 0.15 },
-        ],
-        threshold: 0.35,   /* 0 = coincidencia exacta, 1 = todo */
-        ignoreLocation: true,
-        minMatchCharLength: 2,
-      });
-
-      /* Buscamos los <li> en el documento completo.
-         Hay una sola bitácora por página, por lo que es seguro. */
       this.#entries = document.querySelectorAll<HTMLElement>('[data-entry-id]');
       this.#countEl = this.querySelector<HTMLElement>('.ls-count');
       this.#input   = this.querySelector<HTMLInputElement>('input');
@@ -101,44 +73,147 @@ const { index } = Astro.props;
       });
     }
 
+    #setEntryOpen(id: string, open: boolean) {
+      const details = document.querySelector<HTMLDetailsElement>(
+        `#logbook-${CSS.escape(id)}`,
+      );
+      if (details) details.open = open;
+    }
+
+    #escapeRegex(value: string): string {
+      return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    /** Quita todos los <mark> de resaltado antes de volver a aplicar */
+    #clearHighlights() {
+      document.querySelectorAll('#bitacora mark.ls-hit').forEach((mark) => {
+        mark.replaceWith(document.createTextNode(mark.textContent ?? ''));
+      });
+      document.querySelector('#bitacora')?.normalize();
+    }
+
+    #highlightTextNode(textNode: Text, pattern: RegExp): number {
+      const text = textNode.nodeValue ?? '';
+      pattern.lastIndex = 0;
+      if (!pattern.test(text)) return 0;
+
+      const re = new RegExp(pattern.source, pattern.flags);
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+      let match: RegExpExecArray | null;
+      let hits = 0;
+
+      while ((match = re.exec(text)) !== null) {
+        const start = match.index;
+        const matched = match[0];
+        if (start > lastIndex) {
+          fragment.appendChild(document.createTextNode(text.slice(lastIndex, start)));
+        }
+        const mark = document.createElement('mark');
+        mark.className = 'ls-hit';
+        mark.textContent = matched;
+        fragment.appendChild(mark);
+        hits++;
+        lastIndex = start + matched.length;
+        if (matched.length === 0) break;
+      }
+
+      if (hits === 0) return 0;
+
+      if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+      }
+
+      textNode.parentNode?.replaceChild(fragment, textNode);
+      return hits;
+    }
+
+    #highlightEntry(entryEl: HTMLElement, query: string): number {
+      const article = entryEl.querySelector('.lb-entry');
+      if (!article || query.length === 0) return 0;
+
+      const pattern = new RegExp(this.#escapeRegex(query), 'gi');
+      const targets = article.querySelectorAll(
+        '.lb-entry__headline, .lb-entry__context, .lb-entry__terminal-text, .lb-entry__text, .lb-entry__tech .pill',
+      );
+
+      let hits = 0;
+
+      targets.forEach((target) => {
+        const textNodes: Text[] = [];
+        const walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT);
+
+        let node: Node | null;
+        while ((node = walker.nextNode())) {
+          const textNode = node as Text;
+          if (textNode.parentElement?.closest('mark.ls-hit')) continue;
+          if (textNode.nodeValue?.trim()) textNodes.push(textNode);
+        }
+
+        textNodes.forEach((textNode) => {
+          hits += this.#highlightTextNode(textNode, pattern);
+        });
+      });
+
+      return hits;
+    }
+
     #handleInput(raw: string) {
       const query = raw.trim();
 
+      this.#clearHighlights();
+
       if (!query) {
-        this.#showAll();
+        this.#showAll(false);
         return;
       }
 
-      const results   = this.#fuse!.search(query);
-      const matchedIds = new Set(results.map((r) => r.item.id));
-
       let visible = 0;
+      let totalHits = 0;
+
+      /* Solo entradas con la cadena literal en el DOM (mismo criterio que el <mark>) */
       this.#entries?.forEach((el) => {
         const id = el.dataset.entryId!;
-        if (matchedIds.has(id)) {
+        const hits = this.#highlightEntry(el, query);
+
+        if (hits > 0) {
           el.style.display = '';
+          this.#setEntryOpen(id, true);
+          totalHits += hits;
           visible++;
         } else {
           el.style.display = 'none';
+          this.#setEntryOpen(id, false);
         }
       });
 
-      this.#setCount(visible, query);
+      this.#setCount(visible, totalHits, query);
     }
 
-    #showAll() {
-      this.#entries?.forEach((el) => { el.style.display = ''; });
-      this.#setCount(null, '');
+    #showAll(clearHighlights = true) {
+      if (clearHighlights) this.#clearHighlights();
+      this.#entries?.forEach((el) => {
+        el.style.display = '';
+        const id = el.dataset.entryId;
+        if (id) this.#setEntryOpen(id, false);
+      });
+      this.#setCount(null, null, '');
     }
 
-    #setCount(count: number | null, query: string) {
+    #setCount(entries: number | null, hits: number | null, query: string) {
       if (!this.#countEl) return;
-      if (count === null || !query) {
+      if (entries === null || hits === null || !query) {
         this.#countEl.textContent = '';
+        this.#countEl.removeAttribute('title');
         return;
       }
-      const noun = count === 1 ? 'resultado' : 'resultados';
-      this.#countEl.textContent = `${count} ${noun}`;
+
+      const entryLabel = entries === 1 ? 'entrada' : 'entradas';
+      const hitLabel = hits === 1 ? 'vez' : 'veces';
+      const summary = `${hits} ${hitLabel} · ${entries} ${entryLabel}`;
+
+      this.#countEl.textContent = summary;
+      this.#countEl.title = `${hits} coincidencias de «${query}» en ${entries} ${entryLabel}`;
     }
   }
 
@@ -179,7 +254,7 @@ const { index } = Astro.props;
   .ls-input {
     width: 100%;
     min-height: 44px;           /* área táctil mínima: DESIGN §8 */
-    padding: 0.625rem 6rem 0.625rem 2.625rem; /* dejar espacio al icono y al contador */
+    padding: 0.625rem 8.5rem 0.625rem 2.625rem; /* espacio para icono y contador */
 
     background-color: #111111;  /* Surface 1 */
     border: 1px solid #27272A;
@@ -230,5 +305,26 @@ const { index } = Astro.props;
   /* Sin resultados: el contador se pone en rojo error */
   .ls-count:empty {
     display: none;
+  }
+
+  /* Resaltado de coincidencias en entradas visibles */
+  :global(#bitacora mark.ls-hit) {
+    background-color: rgba(20, 184, 166, 0.18);
+    color: inherit;
+    padding: 0.05em 0.12em;
+    margin: 0 -0.02em;
+    border-radius: 2px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  :global(#bitacora .lb-entry__terminal-text mark.ls-hit) {
+    background-color: rgba(20, 184, 166, 0.24);
+  }
+
+  :global(#bitacora .inline-code mark.ls-hit),
+  :global(#bitacora mark.ls-hit .inline-code) {
+    background-color: rgba(20, 184, 166, 0.3);
+    border-color: rgba(20, 184, 166, 0.45);
   }
 </style>
