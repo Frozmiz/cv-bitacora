@@ -55,7 +55,7 @@ const { index } = Astro.props;
 </logbook-search>
 
 <script>
-  import Fuse from 'fuse.js';
+  import Fuse, { type FuseResultMatch } from 'fuse.js';
 
   interface SearchItem {
     id: string;
@@ -66,12 +66,6 @@ const { index } = Astro.props;
     research: string;
     solution: string;
     learning: string;
-  }
-
-  interface FuseMatch {
-    key?: string;
-    value?: string;
-    indices?: ReadonlyArray<readonly [number, number]>;
   }
 
   const FIELD_SELECTORS: Record<string, string> = {
@@ -243,7 +237,10 @@ const { index } = Astro.props;
       return hits;
     }
 
-    #highlightFuseMatches(entryEl: HTMLElement, matches: FuseMatch[]): number {
+    #highlightFuseMatches(
+      entryEl: HTMLElement,
+      matches: ReadonlyArray<FuseResultMatch>,
+    ): number {
       const article = entryEl.querySelector('.lb-entry');
       if (!article) return 0;
 
@@ -313,7 +310,7 @@ const { index } = Astro.props;
 
         const fuzzyHits = this.#highlightFuseMatches(
           el,
-          (fuseResult.matches ?? []) as FuseMatch[],
+          fuseResult.matches ?? [],
         );
 
         if (fuzzyHits > 0) {
