@@ -12,7 +12,8 @@ const LOGBOOK_CORNERS = ['tr', 'br'] as const;
 const { entry, index = 0 } = Astro.props;
 const corner = LOGBOOK_CORNERS[index % LOGBOOK_CORNERS.length];
 const crop = ((index % 2) + 2) as 2 | 3;
-const { date, context, technologies, error, research, solution, learning } = entry.data;
+const { date, headline, context, technologies, error, research, solution, learning } =
+  entry.data;
 
 /** Formatea la fecha en español: "10 jun 2026" */
 const dateFormatted = new Intl.DateTimeFormat('es-ES', {
@@ -35,99 +36,299 @@ function parseInlineCode(text: string): string {
 }
 ---
 
-<article class="lb-entry" aria-label={`Entrada del ${dateFormatted}: ${context}`}>
-  <ArticleWireframe corner={corner} intensity="soft" crop={crop} />
-
-  <!-- Nodo circular sobre la línea del timeline -->
-  <span class="lb-entry__node" aria-hidden="true"></span>
-
-  <!-- ── Cabecera ──────────────────────────────────────────────────────── -->
-  <header class="lb-entry__header">
-    <time
-      datetime={date.toISOString().slice(0, 10)}
-      class="lb-entry__date"
-    >
-      {dateFormatted}
-    </time>
-    <h3 class="lb-entry__context">{context}</h3>
-
-    <!-- Tecnologías implicadas (pills monospace) -->
-    <ul class="lb-entry__tech" aria-label="Tecnologías implicadas">
-      {technologies.map((tech) => (
-        <li><span class="pill">{tech}</span></li>
-      ))}
-    </ul>
-  </header>
-
-  <!-- ── Cuerpo ────────────────────────────────────────────────────────── -->
-  <div class="lb-entry__body">
-
-    <!-- Error / dificultad: estilo terminal -->
-    <section class="lb-entry__block" aria-labelledby={`error-${entry.id}`}>
-      <h4 id={`error-${entry.id}`} class="lb-entry__label lb-entry__label--error">
-        <span aria-hidden="true">⚑</span> Error / Dificultad
-      </h4>
-      <div class="lb-entry__terminal">
-        <span class="lb-entry__terminal-prompt" aria-hidden="true">$</span>
-        <p class="lb-entry__terminal-text">{error}</p>
-      </div>
-    </section>
-
-    <!-- Investigación -->
-    <section class="lb-entry__block" aria-labelledby={`research-${entry.id}`}>
-      <h4 id={`research-${entry.id}`} class="lb-entry__label lb-entry__label--research">
-        <span aria-hidden="true">◎</span> Investigación
-      </h4>
-      <p class="lb-entry__text" set:html={parseInlineCode(research)} />
-    </section>
-
-    <!-- Solución -->
-    <section class="lb-entry__block" aria-labelledby={`solution-${entry.id}`}>
-      <h4 id={`solution-${entry.id}`} class="lb-entry__label lb-entry__label--solution">
-        <span aria-hidden="true">✓</span> Solución
-      </h4>
-      <p class="lb-entry__text" set:html={parseInlineCode(solution)} />
-    </section>
-
-    <!-- Aprendizaje -->
-    <section class="lb-entry__block" aria-labelledby={`learning-${entry.id}`}>
-      <h4 id={`learning-${entry.id}`} class="lb-entry__label lb-entry__label--learning">
-        <span aria-hidden="true">→</span> Aprendizaje
-      </h4>
-      <p class="lb-entry__text" set:html={parseInlineCode(learning)} />
-    </section>
-
+<article class="lb-entry" data-logbook-entry={entry.id}>
+  <div class="lb-entry__decor" aria-hidden="true">
+    <ArticleWireframe corner={corner} intensity="soft" crop={crop} />
   </div>
+
+  <!-- Marcador de batalla sobre la línea del timeline -->
+  <span class="lb-entry__marker" aria-hidden="true">
+    <svg
+      class="lb-entry__swords"
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+      <line x1="13" x2="19" y1="19" y2="13" />
+      <line x1="16" x2="20" y1="16" y2="20" />
+      <line x1="19" x2="21" y1="21" y2="19" />
+      <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" />
+      <line x1="5" x2="9" y1="14" y2="18" />
+      <line x1="7" x2="4" y1="17" y2="20" />
+      <line x1="3" x2="5" y1="19" y2="21" />
+    </svg>
+  </span>
+
+  <details class="lb-entry__details" id={`logbook-${entry.id}`}>
+    <summary class="lb-entry__summary">
+      <time
+        datetime={date.toISOString().slice(0, 10)}
+        class="lb-entry__date"
+      >
+        {dateFormatted}
+      </time>
+      <span class="lb-entry__headline">{headline}</span>
+      <span class="lb-entry__toggle" aria-hidden="true">
+        <svg
+          class="lb-entry__chevron"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </span>
+    </summary>
+
+    <div class="lb-entry__panel">
+      <header class="lb-entry__header">
+        <h3 class="lb-entry__context">{context}</h3>
+
+        <ul class="lb-entry__tech" aria-label="Tecnologías implicadas">
+          {technologies.map((tech) => (
+            <li><span class="pill">{tech}</span></li>
+          ))}
+        </ul>
+      </header>
+
+      <div class="lb-entry__body">
+        <section class="lb-entry__block" aria-labelledby={`error-${entry.id}`}>
+          <h4 id={`error-${entry.id}`} class="lb-entry__label lb-entry__label--error">
+            <span aria-hidden="true">⚑</span> Error / Dificultad
+          </h4>
+          <div class="lb-entry__terminal">
+            <span class="lb-entry__terminal-prompt" aria-hidden="true">$</span>
+            <p class="lb-entry__terminal-text">{error}</p>
+          </div>
+        </section>
+
+        <section class="lb-entry__block" aria-labelledby={`research-${entry.id}`}>
+          <h4 id={`research-${entry.id}`} class="lb-entry__label lb-entry__label--research">
+            <span aria-hidden="true">◎</span> Investigación
+          </h4>
+          <p class="lb-entry__text" set:html={parseInlineCode(research)} />
+        </section>
+
+        <section class="lb-entry__block" aria-labelledby={`solution-${entry.id}`}>
+          <h4 id={`solution-${entry.id}`} class="lb-entry__label lb-entry__label--solution">
+            <span aria-hidden="true">✓</span> Solución
+          </h4>
+          <p class="lb-entry__text" set:html={parseInlineCode(solution)} />
+        </section>
+
+        <section class="lb-entry__block" aria-labelledby={`learning-${entry.id}`}>
+          <h4 id={`learning-${entry.id}`} class="lb-entry__label lb-entry__label--learning">
+            <span aria-hidden="true">→</span> Aprendizaje
+          </h4>
+          <p class="lb-entry__text" set:html={parseInlineCode(learning)} />
+        </section>
+      </div>
+    </div>
+  </details>
 </article>
 
 <style>
-  /* ── Entrada principal ───────────────────────────────────────────────── */
   .lb-entry {
     position: relative;
-    overflow: hidden;
-    padding-left: 2rem;         /* espacio entre la línea y el contenido */
-    padding-bottom: 3.5rem;     /* separación entre entradas */
+    overflow: visible;
+    padding-left: 2rem;
+    padding-bottom: 0.75rem;
+    min-width: 0;
   }
 
-  .lb-entry > :not(:global(.art-wire)) {
+  /* Recorta solo el wireframe decorativo, no el summary interactivo */
+  .lb-entry__decor {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .lb-entry > :not(.lb-entry__decor):not(.lb-entry__marker) {
     position: relative;
     z-index: 1;
   }
 
-  /* ── Nodo circular sobre la línea ───────────────────────────────────── */
-  .lb-entry__node {
-    position: absolute;
-    left: calc(-0.3125rem);     /* centra el nodo (10px/2 - 1px border) sobre la línea */
-    top: 0.35rem;
-    width: 0.625rem;            /* 10px */
-    height: 0.625rem;
-    border-radius: 50%;
-    background-color: #10B981;  /* status-success: entrada resuelta */
-    outline: 2px solid #0A0A0A; /* crea el anillo usando el fondo base */
-    outline-offset: 1px;
+  .lb-entry:has(.lb-entry__details[open]) {
+    padding-bottom: 3.5rem;
   }
 
-  /* ── Cabecera ────────────────────────────────────────────────────────── */
+  .lb-entry:has(.lb-entry__details:not([open])) .lb-entry__decor :global(.art-wire) {
+    opacity: 0.35;
+  }
+
+  .lb-entry__marker {
+    position: absolute;
+    z-index: 2;
+    left: calc(-2rem - 0.3125rem + 1px);
+    top: 0.72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    transform: translateX(-50%);
+    color: #10b981;
+    transition: color 200ms ease;
+  }
+
+  .lb-entry__marker::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    background-color: #0a0a0a;
+    border-radius: 3px;
+    z-index: -1;
+  }
+
+  .lb-entry__marker::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border: 1px solid #10b981;
+    border-radius: 4px;
+    opacity: 0.55;
+    animation: lb-battle-pulse 2.8s ease-out infinite;
+    pointer-events: none;
+  }
+
+  .lb-entry__swords {
+    display: block;
+    flex-shrink: 0;
+  }
+
+  @keyframes lb-battle-pulse {
+    0% {
+      transform: scale(0.9) rotate(-2deg);
+      opacity: 0.55;
+    }
+    70% {
+      transform: scale(1.35) rotate(2deg);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1.35) rotate(2deg);
+      opacity: 0;
+    }
+  }
+
+  .lb-entry:has(.lb-entry__details[open]) .lb-entry__marker {
+    color: #14b8a6;
+  }
+
+  .lb-entry:has(.lb-entry__details[open]) .lb-entry__marker::after {
+    border-color: #14b8a6;
+    animation-duration: 2.1s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lb-entry__marker::after {
+      animation: none;
+      opacity: 0.3;
+      transform: none;
+    }
+  }
+
+  .lb-entry__details {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .lb-entry__summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.75rem 1rem;
+    list-style: none;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition:
+      border-color 200ms ease,
+      background-color 200ms ease;
+  }
+
+  .lb-entry__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .lb-entry__summary:hover {
+    background-color: #111111;
+    border-color: #27272a;
+  }
+
+  .lb-entry__details[open] > .lb-entry__summary {
+    margin-bottom: 1rem;
+    border-color: #27272a;
+    background-color: #111111;
+  }
+
+  .lb-entry__date {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    color: #a1a1aa;
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
+    white-space: nowrap;
+  }
+
+  .lb-entry__headline {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: #ededed;
+    line-height: 1.45;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+
+  .lb-entry__toggle {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: #a1a1aa;
+    transition: color 200ms ease;
+  }
+
+  .lb-entry__summary:hover .lb-entry__toggle,
+  .lb-entry__details[open] .lb-entry__toggle {
+    color: #14b8a6;
+  }
+
+  .lb-entry__chevron {
+    transition: transform 220ms ease;
+  }
+
+  .lb-entry__details[open] .lb-entry__chevron {
+    transform: rotate(180deg);
+  }
+
+  .lb-entry__panel {
+    padding-top: 0.25rem;
+  }
+
   .lb-entry__header {
     display: flex;
     flex-direction: column;
@@ -135,21 +336,13 @@ function parseInlineCode(text: string): string {
     margin-bottom: 1.25rem;
   }
 
-  .lb-entry__date {
-    font-family: var(--font-mono, monospace);
-    font-size: 0.75rem;
-    color: #A1A1AA;
-    letter-spacing: 0.05em;
-    text-transform: lowercase;
-  }
-
   .lb-entry__context {
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: #EDEDED;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: #a1a1aa;
     margin: 0;
-    line-height: 1.4;
+    line-height: 1.55;
     max-width: 70ch;
   }
 
@@ -162,14 +355,12 @@ function parseInlineCode(text: string): string {
     padding: 0;
   }
 
-  /* ── Cuerpo ──────────────────────────────────────────────────────────── */
   .lb-entry__body {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
   }
 
-  /* ── Bloque semántico (error / research / solution / learning) ───────── */
   .lb-entry__block {
     display: flex;
     flex-direction: column;
@@ -187,18 +378,16 @@ function parseInlineCode(text: string): string {
     margin: 0;
   }
 
-  /* Colores semánticos de los labels (DESIGN §2 Status/Logbook) */
-  .lb-entry__label--error    { color: #EF4444; }
-  .lb-entry__label--research { color: #F59E0B; }
-  .lb-entry__label--solution { color: #10B981; }
-  .lb-entry__label--learning { color: #A1A1AA; }
+  .lb-entry__label--error    { color: #ef4444; }
+  .lb-entry__label--research { color: #f59e0b; }
+  .lb-entry__label--solution { color: #10b981; }
+  .lb-entry__label--learning { color: #a1a1aa; }
 
-  /* ── Bloque terminal (para el campo error) ───────────────────────────── */
   .lb-entry__terminal {
     display: flex;
     gap: 0.625rem;
-    background-color: #1A1A1A;  /* Surface 2 */
-    border: 1px solid #27272A;
+    background-color: #1a1a1a;
+    border: 1px solid #27272a;
     border-radius: 6px;
     padding: 0.875rem 1rem;
     max-width: 75ch;
@@ -207,7 +396,7 @@ function parseInlineCode(text: string): string {
   .lb-entry__terminal-prompt {
     font-family: var(--font-mono, monospace);
     font-size: 0.8125rem;
-    color: #EF4444;
+    color: #ef4444;
     user-select: none;
     flex-shrink: 0;
     padding-top: 0.05em;
@@ -217,28 +406,47 @@ function parseInlineCode(text: string): string {
     font-family: var(--font-mono, monospace);
     font-size: 0.8125rem;
     line-height: 1.65;
-    color: #A1A1AA;
+    color: #a1a1aa;
     margin: 0;
     word-break: break-word;
   }
 
-  /* ── Texto de los campos research / solution / learning ──────────────── */
   .lb-entry__text {
     font-size: 0.9375rem;
     line-height: 1.75;
-    color: #A1A1AA;
+    color: #a1a1aa;
     margin: 0;
-    max-width: 72ch;   /* DESIGN §7: alineado a la izquierda, longitud legible */
+    max-width: 72ch;
   }
 
-  /* Código inline generado por parseInlineCode() */
   :global(.inline-code) {
     font-family: var(--font-mono, monospace);
     font-size: 0.8125rem;
-    background-color: #1A1A1A;  /* Surface 2 */
-    color: #14B8A6;              /* acento primario para código */
+    background-color: #1a1a1a;
+    color: #14b8a6;
     padding: 0.1em 0.4em;
     border-radius: 3px;
-    border: 1px solid #27272A;
+    border: 1px solid #27272a;
+  }
+
+  @media (max-width: 640px) {
+    .lb-entry__summary {
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+    }
+
+    .lb-entry__date {
+      grid-column: 1 / -1;
+    }
+
+    .lb-entry__headline {
+      grid-column: 1;
+    }
+
+    .lb-entry__toggle {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: center;
+    }
   }
 </style>

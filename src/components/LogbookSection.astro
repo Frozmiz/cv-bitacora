@@ -15,6 +15,7 @@ const entries = (await getCollection('logbook')).sort(
 const searchIndex = JSON.stringify(
   entries.map((e) => ({
     id:           e.id,
+    headline:     e.data.headline,
     context:      e.data.context,
     error:        e.data.error,
     technologies: e.data.technologies,
@@ -29,15 +30,38 @@ const searchIndex = JSON.stringify(
     <p class="logbook-section__label">Registro técnico</p>
     <h2 class="logbook-section__title">Bitácora</h2>
     <p class="logbook-section__subtitle">
-      Problemas reales encontrados en producción y en desarrollo,
-      con el proceso completo de diagnóstico y solución.
+      Aquí recopilo algunos de los fallos reales de los que he aprendido, a base de chocazos contra la pared,
+      y que me recuerdan porque nunca voy a dejar de aprender dentro de este maravilloso mundo del software.
     </p>
+
+    <div class="logbook-section__hint" role="note" aria-label="Cómo usar la bitácora">
+      <span class="logbook-section__hint-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+        </svg>
+      </span>
+      <p class="logbook-section__hint-text">
+        Cada caso incluye un titular y un diagnóstico completo accesible con un clic
+        o mediante el buscador.
+      </p>
+    </div>
   </header>
 
   <!--
     Timeline:
     El <ul> lleva el border-left que forma la línea vertical continua.
-    Los nodos circulares de cada entrada se posicionan sobre esa línea.
+    Los marcadores de batalla (espadas cruzadas) de cada entrada se posicionan sobre esa línea.
     El último elemento no tiene padding-bottom para que la línea
     no sobrepase el último nodo (overflow: hidden en el ul).
   -->
@@ -87,6 +111,41 @@ const searchIndex = JSON.stringify(
     max-width: 65ch;
   }
 
+  .logbook-section__hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.875rem 1rem;
+    max-width: 100%;
+    background-color: #111111;
+    border: 1px solid #27272a;
+    border-left: 3px solid #14b8a6;
+    border-radius: 8px;
+  }
+
+  .logbook-section__hint-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin-top: 0.05rem;
+    color: #14b8a6;
+    background-color: rgba(20, 184, 166, 0.1);
+    border: 1px solid rgba(20, 184, 166, 0.35);
+    border-radius: 50%;
+  }
+
+  .logbook-section__hint-text {
+    margin: 0;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: #ededed;
+  }
+
   .logbook-section__label {
     font-family: var(--font-mono, monospace);
     font-size: 0.75rem;
@@ -118,26 +177,42 @@ const searchIndex = JSON.stringify(
     margin: 0;
   }
 
+  .logbook-section__body {
+    min-width: 0;
+  }
+
   /* ── Timeline (línea vertical continua) ─────────────────────────────── */
   .logbook-timeline {
     list-style: none;
     margin: 0;
     padding: 0;
+    min-width: 0;
 
-    /*
-      La línea vertical está en el ul.
-      margin-left separa la línea del borde de la página.
-    */
     border-left: 1px solid #27272A;
-    margin-left: 0.3125rem;    /* 5px: centra la línea bajo los nodos */
-    overflow: hidden;          /* evita que la línea sobrepase el último nodo */
+    margin-left: 0.3125rem;
   }
 
   .logbook-timeline__item {
-    /* Sin padding-bottom en el último elemento para que la línea termine en el nodo */
+    min-width: 0;
   }
 
-  .logbook-timeline__item--last :global(.lb-entry) {
+  .logbook-timeline__item--last {
+    position: relative;
+  }
+
+  /* Tapar el tramo de línea por debajo del último nodo */
+  .logbook-timeline__item--last::after {
+    content: '';
+    position: absolute;
+    left: -2px;
+    bottom: 0;
+    width: 3px;
+    height: 0.75rem;
+    background-color: #0a0a0a;
+    pointer-events: none;
+  }
+
+  .logbook-timeline__item--last :global(.lb-entry:has(.lb-entry__details[open])) {
     padding-bottom: 0;
   }
 
