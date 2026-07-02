@@ -1,7 +1,7 @@
 ---
 date: 2026-07-02
 headline: "¿Fuse o no fuse? Esa es la cuestión"
-context: "Quería añadir al buscador de la bitácora (`<logbook-search>`) algo que Fuse no estaba pensado para dar: búsqueda clara y verificable en el DOM. Que al escribir una palabra solo aparecieran entradas donde ese texto exista de verdad, con `<mark>` sobre la cadena buscada, contador de coincidencias literales y expansión automática del `<details>`. Eso contradice el objetivo de Fuse.js, que es encontrar similitudes y tolerar imprecisiones, no exigir substring exacta ni demostrar visualmente dónde cayó el match. El índice JSON en `data-index` seguía sirviendo para fuzzy; el HTML del servidor pasó a ser la fuente de verdad para lo que el usuario debe ver resaltado."
+context: "El buscador de la bitácora (`<logbook-search>`) ya filtraba con Fuse.js, pero al añadir resaltado literal en el DOM apareció un fallo de confianza: entradas visibles sin la palabra buscada marcada en ningún sitio. Quería que cada resultado fuera comprobable (solo mostrar lo que se puede resaltar, contador honesto, `<details>` abiertos con sentido), aunque eso vaya en contra de lo que Fuse hace por defecto: tolerar similitudes sin exigir el texto exacto."
 technologies:
   - Astro
   - TypeScript

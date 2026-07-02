@@ -1,7 +1,7 @@
 ---
 date: 2026-06-22
 headline: "El toast se fue sin despedirse (Angular tenía prisa)"
-context: "Animación de entrada y salida de notificaciones Toast dentro de un bucle `@for` reactivo en una arquitectura Zoneless con Angular 21."
+context: "En el front de Slowork (Angular 21 zoneless) estaba puliendo las notificaciones toast del panel admin. Cada aviso se renderiza en un `@for` con temporizador de cierre: al expirar, Angular elimina el nodo al instante y la transición de salida no se llega a ver. El objetivo era animar entrada y salida con CSS nativo, sin añadir `@angular/animations` ni penalizar Lighthouse."
 technologies:
   - "Angular 21"
   - "CSS Moderno"
