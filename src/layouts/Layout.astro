@@ -20,8 +20,9 @@ const {
 } = Astro.props;
 
 const pageTitle = title === siteName ? siteName : `${title} · ${siteName}`;
-const pageUrl = Astro.url.href;
-const ogImageUrl = new URL(image, Astro.url).href;
+const siteOrigin = Astro.site ?? Astro.url;
+const pageUrl = new URL(Astro.url.pathname, siteOrigin).href;
+const ogImageUrl = new URL(image, siteOrigin).href;
 ---
 
 <!doctype html>
@@ -40,6 +41,7 @@ const ogImageUrl = new URL(image, Astro.url).href;
     <meta property="og:url" content={pageUrl} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:image" content={ogImageUrl} />
 
     <!-- Twitter Cards -->
