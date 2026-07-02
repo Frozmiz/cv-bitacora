@@ -1,5 +1,6 @@
 ---
 date: 2026-06-27
+headline: "SignalStore y Apollo se abrazaron hasta el NG0200"
 context: "Restaurar el badge de notificaciones del sidebar admin en SloWork Front. El contador global (`totalPendingCount`) vive en `AppStore` (NgRx SignalStore) y combina pendientes de Creadores (REST) y Hosts (GraphQL vía Apollo)."
 technologies:
   - "Angular 21"

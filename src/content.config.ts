@@ -34,6 +34,8 @@ const logbook = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/logbook' }),
   schema: z.object({
     date: z.coerce.date(),
+    /** Titular humorístico visible colapsado; al clic se expande el caso completo */
+    headline: z.string(),
     context: z.string(),
     technologies: z.array(z.string()),
     error: z.string(),

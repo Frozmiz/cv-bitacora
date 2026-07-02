@@ -1,5 +1,6 @@
 ---
 date: 2026-06-10
+headline: "Fuse.js buscaba en la bitácora y solo encontró un `{}`"
 context: CV Interactivo con búsqueda difusa en la sección de bitácora mediante un Web Component (`<logbook-search>`) embebido en Astro 6. La interactividad vive en un `<script>` procesado por Vite, sin añadir React ni `@astrojs/react` al proyecto.
 technologies:
   - Astro

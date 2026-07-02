@@ -1,5 +1,6 @@
 ---
 date: 2026-06-22
+headline: "El toast se fue sin despedirse (Angular tenía prisa)"
 context: "Animación de entrada y salida de notificaciones Toast dentro de un bucle `@for` reactivo en una arquitectura Zoneless con Angular 21."
 technologies:
   - "Angular 21"
