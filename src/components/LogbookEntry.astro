@@ -120,21 +120,21 @@ function parseInlineCode(text: string): string {
           <h4 id={`research-${entry.id}`} class="lb-entry__label lb-entry__label--research">
             <span aria-hidden="true">◎</span> Investigación
           </h4>
-          <p class="lb-entry__text" set:html={parseInlineCode(research)} />
+          <p class="lb-entry__text" data-search-field="research" set:html={parseInlineCode(research)} />
         </section>
 
         <section class="lb-entry__block" aria-labelledby={`solution-${entry.id}`}>
           <h4 id={`solution-${entry.id}`} class="lb-entry__label lb-entry__label--solution">
             <span aria-hidden="true">✓</span> Solución
           </h4>
-          <p class="lb-entry__text" set:html={parseInlineCode(solution)} />
+          <p class="lb-entry__text" data-search-field="solution" set:html={parseInlineCode(solution)} />
         </section>
 
         <section class="lb-entry__block" aria-labelledby={`learning-${entry.id}`}>
           <h4 id={`learning-${entry.id}`} class="lb-entry__label lb-entry__label--learning">
             <span aria-hidden="true">→</span> Aprendizaje
           </h4>
-          <p class="lb-entry__text" set:html={parseInlineCode(learning)} />
+          <p class="lb-entry__text" data-search-field="learning" set:html={parseInlineCode(learning)} />
         </section>
       </div>
     </div>

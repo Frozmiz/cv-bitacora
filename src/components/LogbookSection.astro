@@ -9,8 +9,8 @@ const entries = (await getCollection('logbook')).sort(
 );
 
 /**
- * Índice de búsqueda: solo los campos necesarios para Fuse.js.
- * Se serializa a JSON y viaja al cliente como data attribute.
+ * Índice plano para Fuse.js (coincidencias aproximadas).
+ * La búsqueda exacta se resuelve en el DOM; los campos deben alinearse con data-search-field.
  */
 const searchIndex = JSON.stringify(
   entries.map((e) => ({
@@ -19,7 +19,9 @@ const searchIndex = JSON.stringify(
     context:      e.data.context,
     error:        e.data.error,
     technologies: e.data.technologies,
+    research:     e.data.research,
     solution:     e.data.solution,
+    learning:     e.data.learning,
   })),
 );
 ---

@@ -35,7 +35,7 @@ const { index } = Astro.props;
     <input
       type="search"
       class="ls-input"
-      placeholder="> Buscar por titular, error o tecnología..."
+      placeholder="> Buscar por titular, error o tecnología (exacta o ~aprox)..."
       aria-label="Buscar en la bitácora"
       autocomplete="off"
       spellcheck="false"
@@ -55,14 +55,66 @@ const { index } = Astro.props;
 </logbook-search>
 
 <script>
+  import Fuse from 'fuse.js';
+
+  interface SearchItem {
+    id: string;
+    headline: string;
+    context: string;
+    error: string;
+    technologies: string[];
+    research: string;
+    solution: string;
+    learning: string;
+  }
+
+  interface FuseMatch {
+    key?: string;
+    value?: string;
+    indices?: ReadonlyArray<readonly [number, number]>;
+  }
+
+  const FIELD_SELECTORS: Record<string, string> = {
+    headline: '.lb-entry__headline',
+    context: '.lb-entry__context',
+    error: '.lb-entry__terminal-text',
+    research: '[data-search-field="research"]',
+    solution: '[data-search-field="solution"]',
+    learning: '[data-search-field="learning"]',
+    technologies: '.lb-entry__tech .pill',
+  };
+
+  const SEARCH_TARGETS =
+    '.lb-entry__headline, .lb-entry__context, .lb-entry__terminal-text, [data-search-field], .lb-entry__tech .pill';
+
   class LogbookSearch extends HTMLElement {
+    #fuse: Fuse<SearchItem> | null = null;
     /** <li data-entry-id="..."> elements in the page */
     #entries: NodeListOf<HTMLElement> | null = null;
     #countEl: HTMLElement | null = null;
     #input: HTMLInputElement | null = null;
 
     connectedCallback() {
-      if (!this.dataset.index) return;
+      const raw = this.dataset.index;
+      if (!raw) return;
+
+      const data = JSON.parse(raw) as SearchItem[];
+
+      this.#fuse = new Fuse(data, {
+        keys: [
+          { name: 'headline',     weight: 0.35 },
+          { name: 'error',        weight: 0.25 },
+          { name: 'context',      weight: 0.2 },
+          { name: 'technologies', weight: 0.1 },
+          { name: 'research',     weight: 0.05 },
+          { name: 'solution',     weight: 0.04 },
+          { name: 'learning',     weight: 0.01 },
+        ],
+        threshold: 0.32,
+        ignoreLocation: true,
+        minMatchCharLength: 2,
+        includeMatches: true,
+      });
 
       this.#entries = document.querySelectorAll<HTMLElement>('[data-entry-id]');
       this.#countEl = this.querySelector<HTMLElement>('.ls-count');
@@ -84,7 +136,6 @@ const { index } = Astro.props;
       return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    /** Quita todos los <mark> de resaltado antes de volver a aplicar */
     #clearHighlights() {
       document.querySelectorAll('#bitacora mark.ls-hit').forEach((mark) => {
         mark.replaceWith(document.createTextNode(mark.textContent ?? ''));
@@ -92,7 +143,49 @@ const { index } = Astro.props;
       document.querySelector('#bitacora')?.normalize();
     }
 
-    #highlightTextNode(textNode: Text, pattern: RegExp): number {
+    #clearApproxBadges() {
+      document.querySelectorAll('#bitacora .ls-approx').forEach((el) => el.remove());
+    }
+
+    #setApproxBadge(entryEl: HTMLElement, show: boolean) {
+      const summary = entryEl.querySelector('.lb-entry__summary');
+      if (!summary) return;
+
+      const existing = summary.querySelector('.ls-approx');
+      if (!show) {
+        existing?.remove();
+        return;
+      }
+      if (existing) return;
+
+      const badge = document.createElement('span');
+      badge.className = 'ls-approx';
+      badge.textContent = '~aprox';
+      badge.title = 'Coincidencia aproximada (no es el texto exacto buscado)';
+      const headline = summary.querySelector('.lb-entry__headline');
+      if (headline) headline.after(badge);
+      else summary.insertBefore(badge, summary.querySelector('.lb-entry__toggle'));
+    }
+
+    #collectTextNodes(root: Element): Text[] {
+      const textNodes: Text[] = [];
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+
+      let node: Node | null;
+      while ((node = walker.nextNode())) {
+        const textNode = node as Text;
+        if (textNode.parentElement?.closest('mark.ls-hit')) continue;
+        if (textNode.nodeValue?.trim()) textNodes.push(textNode);
+      }
+
+      return textNodes;
+    }
+
+    #highlightTextNode(
+      textNode: Text,
+      pattern: RegExp,
+      markClass = 'ls-hit',
+    ): number {
       const text = textNode.nodeValue ?? '';
       pattern.lastIndex = 0;
       if (!pattern.test(text)) return 0;
@@ -110,7 +203,7 @@ const { index } = Astro.props;
           fragment.appendChild(document.createTextNode(text.slice(lastIndex, start)));
         }
         const mark = document.createElement('mark');
-        mark.className = 'ls-hit';
+        mark.className = markClass;
         mark.textContent = matched;
         fragment.appendChild(mark);
         hits++;
@@ -128,32 +221,50 @@ const { index } = Astro.props;
       return hits;
     }
 
-    #highlightEntry(entryEl: HTMLElement, query: string): number {
+    #highlightInRoot(root: Element, pattern: RegExp, markClass: string): number {
+      let hits = 0;
+      for (const textNode of this.#collectTextNodes(root)) {
+        hits += this.#highlightTextNode(textNode, pattern, markClass);
+      }
+      return hits;
+    }
+
+    #highlightLiteral(entryEl: HTMLElement, query: string): number {
       const article = entryEl.querySelector('.lb-entry');
       if (!article || query.length === 0) return 0;
 
       const pattern = new RegExp(this.#escapeRegex(query), 'gi');
-      const targets = article.querySelectorAll(
-        '.lb-entry__headline, .lb-entry__context, .lb-entry__terminal-text, .lb-entry__text, .lb-entry__tech .pill',
-      );
+      let hits = 0;
+
+      article.querySelectorAll(SEARCH_TARGETS).forEach((target) => {
+        hits += this.#highlightInRoot(target, pattern, 'ls-hit');
+      });
+
+      return hits;
+    }
+
+    #highlightFuseMatches(entryEl: HTMLElement, matches: FuseMatch[]): number {
+      const article = entryEl.querySelector('.lb-entry');
+      if (!article) return 0;
 
       let hits = 0;
 
-      targets.forEach((target) => {
-        const textNodes: Text[] = [];
-        const walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT);
+      for (const match of matches) {
+        const key = match.key ?? '';
+        const selector = FIELD_SELECTORS[key];
+        const value = match.value ?? '';
+        if (!selector || !value) continue;
 
-        let node: Node | null;
-        while ((node = walker.nextNode())) {
-          const textNode = node as Text;
-          if (textNode.parentElement?.closest('mark.ls-hit')) continue;
-          if (textNode.nodeValue?.trim()) textNodes.push(textNode);
+        for (const [start, end] of match.indices ?? []) {
+          const substring = value.slice(start, end + 1);
+          if (!substring) continue;
+
+          const pattern = new RegExp(this.#escapeRegex(substring), 'gi');
+          article.querySelectorAll(selector).forEach((target) => {
+            hits += this.#highlightInRoot(target, pattern, 'ls-hit ls-hit--approx');
+          });
         }
-
-        textNodes.forEach((textNode) => {
-          hits += this.#highlightTextNode(textNode, pattern);
-        });
-      });
+      }
 
       return hits;
     }
@@ -162,47 +273,96 @@ const { index } = Astro.props;
       const query = raw.trim();
 
       this.#clearHighlights();
+      this.#clearApproxBadges();
 
       if (!query) {
         this.#showAll(false);
         return;
       }
 
+      const fuseById = new Map(
+        this.#fuse!.search(query).map((result) => [result.item.id, result]),
+      );
+
       let visible = 0;
+      let exactEntries = 0;
+      let approxEntries = 0;
       let totalHits = 0;
 
-      /* Solo entradas con la cadena literal en el DOM (mismo criterio que el <mark>) */
       this.#entries?.forEach((el) => {
         const id = el.dataset.entryId!;
-        const hits = this.#highlightEntry(el, query);
+        const literalHits = this.#highlightLiteral(el, query);
 
-        if (hits > 0) {
+        if (literalHits > 0) {
           el.style.display = '';
           this.#setEntryOpen(id, true);
-          totalHits += hits;
+          this.#setApproxBadge(el, false);
+          totalHits += literalHits;
+          exactEntries++;
           visible++;
-        } else {
+          return;
+        }
+
+        const fuseResult = fuseById.get(id);
+        if (!fuseResult) {
           el.style.display = 'none';
           this.#setEntryOpen(id, false);
+          this.#setApproxBadge(el, false);
+          return;
         }
+
+        const fuzzyHits = this.#highlightFuseMatches(
+          el,
+          (fuseResult.matches ?? []) as FuseMatch[],
+        );
+
+        if (fuzzyHits > 0) {
+          el.style.display = '';
+          this.#setEntryOpen(id, true);
+          this.#setApproxBadge(el, true);
+          totalHits += fuzzyHits;
+          approxEntries++;
+          visible++;
+          return;
+        }
+
+        /* Fuse marcó la entrada pero el DOM no pudo resaltar: no mostrar */
+        el.style.display = 'none';
+        this.#setEntryOpen(id, false);
+        this.#setApproxBadge(el, false);
       });
 
-      this.#setCount(visible, totalHits, query);
+      this.#setCount(visible, exactEntries, approxEntries, totalHits, query);
     }
 
     #showAll(clearHighlights = true) {
-      if (clearHighlights) this.#clearHighlights();
+      if (clearHighlights) {
+        this.#clearHighlights();
+        this.#clearApproxBadges();
+      }
       this.#entries?.forEach((el) => {
         el.style.display = '';
         const id = el.dataset.entryId;
         if (id) this.#setEntryOpen(id, false);
       });
-      this.#setCount(null, null, '');
+      this.#setCount(null, null, null, null, '');
     }
 
-    #setCount(entries: number | null, hits: number | null, query: string) {
+    #setCount(
+      entries: number | null,
+      exactEntries: number | null,
+      approxEntries: number | null,
+      hits: number | null,
+      query: string,
+    ) {
       if (!this.#countEl) return;
-      if (entries === null || hits === null || !query) {
+      if (
+        entries === null ||
+        exactEntries === null ||
+        approxEntries === null ||
+        hits === null ||
+        !query
+      ) {
         this.#countEl.textContent = '';
         this.#countEl.removeAttribute('title');
         return;
@@ -210,10 +370,22 @@ const { index } = Astro.props;
 
       const entryLabel = entries === 1 ? 'entrada' : 'entradas';
       const hitLabel = hits === 1 ? 'vez' : 'veces';
-      const summary = `${hits} ${hitLabel} · ${entries} ${entryLabel}`;
+      const parts: string[] = [`${hits} ${hitLabel}`, `${entries} ${entryLabel}`];
 
+      if (exactEntries > 0 && approxEntries > 0) {
+        const exactLabel = exactEntries === 1 ? 'exacta' : 'exactas';
+        const approxLabel = approxEntries === 1 ? 'aprox' : 'aprox';
+        parts.push(`${exactEntries} ${exactLabel} · ${approxEntries} ${approxLabel}`);
+      } else if (approxEntries > 0) {
+        const approxLabel = approxEntries === 1 ? 'aprox' : 'aprox';
+        parts.push(`${approxEntries} ${approxLabel}`);
+      }
+
+      const summary = parts.join(' · ');
       this.#countEl.textContent = summary;
-      this.#countEl.title = `${hits} coincidencias de «${query}» en ${entries} ${entryLabel}`;
+      this.#countEl.title =
+        `${hits} coincidencias de «${query}» en ${entries} ${entryLabel}` +
+        (approxEntries > 0 ? ` (${approxEntries} aproximadas)` : '');
     }
   }
 
@@ -254,7 +426,7 @@ const { index } = Astro.props;
   .ls-input {
     width: 100%;
     min-height: 44px;           /* área táctil mínima: DESIGN §8 */
-    padding: 0.625rem 8.5rem 0.625rem 2.625rem; /* espacio para icono y contador */
+    padding: 0.625rem 10.5rem 0.625rem 2.625rem; /* espacio para icono y contador largo */
 
     background-color: #111111;  /* Surface 1 */
     border: 1px solid #27272A;
@@ -326,5 +498,28 @@ const { index } = Astro.props;
   :global(#bitacora mark.ls-hit .inline-code) {
     background-color: rgba(20, 184, 166, 0.3);
     border-color: rgba(20, 184, 166, 0.45);
+  }
+  :global(#bitacora mark.ls-hit--approx) {
+    background-color: rgba(245, 158, 11, 0.2);
+  }
+
+  :global(#bitacora .lb-entry__terminal-text mark.ls-hit--approx) {
+    background-color: rgba(245, 158, 11, 0.28);
+  }
+
+  :global(#bitacora .ls-approx) {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+    padding: 0.1em 0.35em;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+    color: #fbbf24;
+    background-color: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 3px;
   }
 </style>
