@@ -11,9 +11,9 @@ technologies:
   - DaisyUI 5
 problem: La academia necesitaba centralizar matrículas, progreso de lecciones, pagos (Stripe) y vídeo (Bunny.net) sin depender de LMS genéricos que no encajaban con su modelo de negocio, su identidad visual ni el flujo editorial del blog.
 links:
-  demo: https://platform-web-hazel-pi.vercel.app
+  demo: https://fincaelsarao.com
 ---
 
-Monorepo pnpm con `api/` (NestJS 11 + Prisma 7) y `web/` (Angular 21 zoneless). El frontend despliega en Vercel; la API y PostgreSQL corren en Railway con Dockerfile dedicado. Arquitectura de proveedores desacoplada (`PaymentProvider`, `VideoProvider`) con mocks en desarrollo.
+Monorepo pnpm con `api/` (NestJS 11 + Prisma 7) y `web/` (Angular 21 zoneless). Frontend en Vercel (`fincaelsarao.com`, Root = `web`); API y PostgreSQL en Railway (`api.fincaelsarao.com`). Arquitectura cross-origin (sin proxy Vercel salvo rewrite de `/sitemap.xml`). Proveedores desacoplados (`PaymentProvider`, `VideoProvider`) con mocks en desarrollo.
 
-Fase I en curso según ROADMAP: auth JWT, CRUD de cursos y lecciones, campus del alumno, panel admin con tema oscuro propio, sistema global de toasts con animaciones nativas (`@starting-style` + `animate.leave`) e iconografía centralizada vía `AppIcon` y `@lucide/angular`.
+Fase I–II en curso: auth JWT, blog SEO (Fase A: `SeoService`, JSON-LD, sitemap dinámico), campus del alumno, panel admin con tema oscuro, toasts con `@starting-style` e iconografía vía `AppIcon`. Incidencia de deploy Vercel documentada en la bitácora (jul 2026: monorepo pnpm + Prisma + Root Directory).
