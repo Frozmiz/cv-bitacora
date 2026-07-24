@@ -1,6 +1,9 @@
 ---
 date: 2026-06-10
-headline: "Fuse.js buscaba en la bitácora y solo encontró un `{}`"
+headline: "Fuse.js no encontraba resultados porque estaba indexando el objeto equivocado"
+summary: >
+  `JSON.stringify` de `CollectionEntry` producía `{}`; serialicé objetos
+  planos en el servidor antes de pasar el índice al Web Component.
 context: "Estaba montando el buscador de la bitácora en mi CV (Astro 6). Necesitaba filtrar entradas del timeline en el cliente sin React ni re-render del HTML del servidor: un Web Component con Fuse.js y un índice JSON generado en build. El primer paso era hacer llegar los datos de `getCollection('logbook')` al navegador de forma fiable."
 technologies:
   - Astro

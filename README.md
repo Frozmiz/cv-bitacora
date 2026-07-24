@@ -54,6 +54,9 @@ links:
 ```md
 ---
 date: 2026-06-10
+headline: Síntoma comprensible: causa o contexto técnico
+summary: >
+  Qué fallaba, por qué ocurría y qué se hizo, en una sola frase.
 context: Contexto del problema.
 technologies: [Astro, TypeScript]
 error: Descripción del error o dificultad.

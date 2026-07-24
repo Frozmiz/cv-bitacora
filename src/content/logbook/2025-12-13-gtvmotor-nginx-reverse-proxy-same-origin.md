@@ -1,6 +1,9 @@
 ---
 date: 2025-12-13
-headline: "0 coches en prod y la DB llena: plot twist, era localhost"
+headline: "Producción mostraba cero vehículos porque la API seguía conectada a localhost"
+summary: >
+  El catálogo en prod salía vacío con la DB llena porque `apiUrl` apuntaba a
+  localhost; unifiqué SPA y API bajo `/api` same-origin con Nginx.
 context: "Estaba cerrando el primer deploy en producción de GTVMOTOR en AWS EC2: Angular servido por Nginx en el host, API NestJS y PostgreSQL 16 en Docker, dominios gtvmotor.es y gtvmotor.co.uk con SSL. La infra de proxy se montó el 12/12/2025; al día siguiente, con todo desplegado, la web cargaba pero el catálogo de coches aparecía vacío para cualquier visitante."
 technologies:
   - AWS EC2

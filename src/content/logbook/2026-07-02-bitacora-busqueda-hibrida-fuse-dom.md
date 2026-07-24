@@ -1,6 +1,10 @@
 ---
 date: 2026-07-02
-headline: "¿Fuse o no fuse? Esa es la cuestión"
+headline: "Fuse.js mostraba entradas sin resaltar: el filtro fuzzy no coincidía con el DOM"
+summary: >
+  El buscador devolvía coincidencias aproximadas sin poder resaltarlas en el
+  DOM; prioricé la coincidencia literal y limité el resaltado fuzzy a los
+  matches reales de Fuse.
 context: "El buscador de la bitácora (`<logbook-search>`) ya filtraba con Fuse.js, pero al añadir resaltado literal en el DOM apareció un fallo de confianza: entradas visibles sin la palabra buscada marcada en ningún sitio. Quería que cada resultado fuera comprobable (solo mostrar lo que se puede resaltar, contador honesto, `<details>` abiertos con sentido), aunque eso vaya en contra de lo que Fuse hace por defecto: tolerar similitudes sin exigir el texto exacto."
 technologies:
   - Astro

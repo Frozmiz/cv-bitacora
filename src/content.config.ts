@@ -35,6 +35,7 @@ const logbook = defineCollection({
   schema: z.object({
     date: z.coerce.date(),
     headline: z.string(),
+    summary: z.string(),
     context: z.string(),
     technologies: z.array(z.string()),
     error: z.string(),

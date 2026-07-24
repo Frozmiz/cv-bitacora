@@ -1,6 +1,10 @@
 ---
 date: 2026-07-03
-headline: "ng build OK, pero Vercel seguía typecheckeando NestJS"
+headline: "Vercel bloqueaba el despliegue de Angular por errores de tipos de NestJS"
+summary: >
+  El pipeline de Vercel fallaba tras un `ng build` correcto porque
+  typechequeaba NestJS/Prisma del monorepo; fijé Root Directory en `web`
+  con Include outside enabled.
 context: "Estaba cerrando el deploy de Finca El Sarao (monorepo pnpm: Angular 21 en `web/`, NestJS 11 + Prisma 7 en `api/`) tras la Fase A SEO. El frontend va a Vercel (`fincaelsarao.com`); la API y PostgreSQL corren en Railway (`api.fincaelsarao.com`). No hay proxy same-origin como en GTVMOTOR: la SPA llama cross-origin con cookies HttpOnly para refresh. El build local y `ng build` en Vercel pasaban; el pipeline fallaba en fases posteriores o al cambiar Root Directory."
 technologies:
   - Vercel

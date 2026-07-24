@@ -1,6 +1,9 @@
 ---
 date: 2026-06-27
-headline: "SignalStore y Apollo se abrazaron hasta el NG0200"
+headline: "Angular lanzaba NG0200: SignalStore y Apollo crearon una dependencia circular"
+summary: >
+  El bootstrap fallaba por el ciclo AppStore → HostPending → Apollo → AppStore;
+  rompí la inyección eager con `Injector` y resolución perezosa en la acción.
 context: "En el front de Slowork, el sidebar del admin muestra un badge con el total de solicitudes pendientes (creadores vía REST y hosts vía GraphQL). Ese número vive en `AppStore`, un NgRx SignalStore global. Tras tocar la carga de contadores en el store, la aplicación dejó de arrancar en `/login`: antes de poder validar si el badge volvía a funcionar, el bootstrap ya fallaba con un error de dependencias."
 technologies:
   - "Angular 21"

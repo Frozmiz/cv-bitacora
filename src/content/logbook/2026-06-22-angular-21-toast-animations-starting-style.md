@@ -1,6 +1,10 @@
 ---
 date: 2026-06-22
-headline: "El toast se fue sin despedirse (Angular tenía prisa)"
+headline: "La animación de salida del toast no se veía: Angular destruía el nodo antes del CSS"
+summary: >
+  El `@for` eliminaba el toast al instante y cortaba la transición; usé
+  `@starting-style` en la entrada y `animate.leave` para retener el nodo hasta
+  el fin del CSS.
 context: "En el front de Slowork (Angular 21 zoneless) estaba puliendo las notificaciones toast del panel admin. Cada aviso se renderiza en un `@for` con temporizador de cierre: al expirar, Angular elimina el nodo al instante y la transición de salida no se llega a ver. El objetivo era animar entrada y salida con CSS nativo, sin añadir `@angular/animations` ni penalizar Lighthouse."
 technologies:
   - "Angular 21"

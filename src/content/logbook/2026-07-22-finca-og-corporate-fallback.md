@@ -1,6 +1,10 @@
 ---
 date: 2026-07-22
-headline: "El logo estaba en Angular, pero WhatsApp solo leía index.html"
+headline: "WhatsApp no mostraba el logo: los metadatos de Angular no estaban en el HTML inicial"
+summary: >
+  Los scrapers sociales no ejecutaban el JavaScript de Angular; añadí un
+  fallback Open Graph estático y pospuse las tarjetas específicas por ruta
+  hasta SSR o prerenderizado.
 context: " Tras completar la Fase A de SEO de Finca El Sarao, la aplicación Angular CSR
   ya estaba desplegada en Vercel. El siguiente objetivo era conseguir que los
   enlaces compartidos en WhatsApp y otras redes generasen una vista previa
