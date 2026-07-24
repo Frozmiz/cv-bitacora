@@ -2,11 +2,16 @@
 import Icon from './ui/Icon.astro';
 import type { IconName } from './ui/icons';
 
+/**
+ * Hashes con ruta raíz (`/#inicio`) para que funcionen también desde /cv
+ * u otras páginas. En la home el navegador trata `/#…` como navegación
+ * same-document y hace scroll sin recargar.
+ */
 const links: { href: string; label: string; icon: IconName }[] = [
-  { href: '#inicio', label: 'Inicio', icon: 'home' },
-  { href: '#sobre-mi', label: 'Sobre mí', icon: 'user' },
-  { href: '#proyectos', label: 'Proyectos', icon: 'monitor' },
-  { href: '#bitacora', label: 'Bitácora', icon: 'code' },
+  { href: '/#inicio', label: 'Inicio', icon: 'home' },
+  { href: '/#sobre-mi', label: 'Sobre mí', icon: 'user' },
+  { href: '/#proyectos', label: 'Proyectos', icon: 'monitor' },
+  { href: '/#bitacora', label: 'Bitácora', icon: 'code' },
 ];
 
 const cvLink: { href: string; label: string; icon: IconName } = {
@@ -14,6 +19,8 @@ const cvLink: { href: string; label: string; icon: IconName } = {
   label: 'CV en PDF',
   icon: 'file-text',
 };
+
+const homeHref = '/#inicio';
 ---
 
 <!--
@@ -25,7 +32,7 @@ const cvLink: { href: string; label: string; icon: IconName } = {
 >
   <!-- Logo / marca -->
   <a
-    href="#inicio"
+    href={homeHref}
     class="sidebar__logo"
     aria-label="Inicio"
   >
@@ -266,11 +273,25 @@ const cvLink: { href: string; label: string; icon: IconName } = {
    * Marca el enlace activo según la sección visible usando IntersectionObserver.
    * Actualiza aria-current="page" en todos los [data-nav-link] que comparten href.
    */
+  function sectionIdFromHref(href: string | null): string | null {
+    if (!href) return null;
+    const hashIndex = href.indexOf('#');
+    if (hashIndex === -1) return null;
+    const id = href.slice(hashIndex + 1);
+    return id || null;
+  }
+
   function initActiveNav() {
     const links = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
     if (!links.length) return;
 
-    const sectionIds = [...new Set([...links].map(l => l.getAttribute('href')?.slice(1)).filter(Boolean))] as string[];
+    const sectionIds = [
+      ...new Set(
+        [...links]
+          .map((l) => sectionIdFromHref(l.getAttribute('href')))
+          .filter((id): id is string => Boolean(id)),
+      ),
+    ];
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -278,8 +299,7 @@ const cvLink: { href: string; label: string; icon: IconName } = {
           if (entry.isIntersecting) {
             const id = entry.target.id;
             links.forEach((link) => {
-              const active = link.getAttribute('href') === `#${id}`;
-              link.toggleAttribute('aria-current', active);
+              const active = sectionIdFromHref(link.getAttribute('href')) === id;
               if (active) link.setAttribute('aria-current', 'page');
               else link.removeAttribute('aria-current');
             });
