@@ -32,6 +32,12 @@
   - Borde: Fino, 1px sólido `#27272A` (Zinc-800).
   - Radio de borde (Border-radius): `12px` (0.75rem).
   - Interacción: Al hacer hover, el borde transiciona suavemente a `#3F3F46`.
+  - Bloque «Por qué nace» (`origin` en frontmatter): label mono uppercase Secondary; texto Secondary. No usar framing de «Problema».
+  - Grid Bento: `align-items: start` para que un featured alto (tarjeta + landings) no estire fichas vecinas.
+- **Iconos (Lucide):**
+  - API: `<Icon name="…" />` en `src/components/ui/` sobre `@lucide/astro`.
+  - Decorativos en nav/enlaces (`aria-hidden`); `label` solo si el icono es significativo por sí mismo.
+  - Brand logos fuera de Lucide (`simple-icons` en Hero; SVG filled GitHub/LinkedIn donde aplique).
 - **Botones:**
   - Primario: Fondo blanco (`#EDEDED`), texto negro (`#0A0A0A`), sin bordes, radio `6px`.
   - Secundario/Fantasma: Fondo transparente, texto Secondary, al hacer hover cambia el fondo a Surface 2.
@@ -40,11 +46,14 @@
   - Fondo Surface 2, Borde 1px sólido `#27272A`, radio `4px`.
 - **Entradas de la Bitácora (Timeline):**
   - Línea vertical izquierda (`#27272A`) que conecta los casos.
-  - Marcador de batalla (espadas) sobre la línea, con acento verde/teal; respeta `prefers-reduced-motion`.
+  - Marcador de batalla (espadas Lucide) sobre la línea, con acento verde/teal; respeta `prefers-reduced-motion`.
   - Entrada cerrada (`<details>`/`<summary>`): fecha mono secundaria → pills de tecnología → titular (`h3`, mayor peso) → resumen (`summary`, texto Secondary) → CTA textual teal (`Ver diagnóstico →` / `Ocultar diagnóstico ↑`).
   - Sin chevron aislado ni botones anidados dentro del `<summary>`. Blurb y CTA como `<span>` (no `<p>` dentro de `<summary>`).
-  - Entrada abierta: bloques Contexto / Error / Investigación / Solución / Aprendizaje con labels mono y colores Status/Logbook. Aprendizaje usa icono Lucide `lightbulb` inline.
+  - Entrada abierta: bloques Contexto / Error / Investigación / Solución / Aprendizaje con labels mono, colores Status/Logbook e iconos Lucide decorativos (`diamond`, `flag`, `circle-dot`, `check`, `lightbulb`; size 12, stroke-width 2).
   - Ancla por entrada: `id="logbook-{entry.id}"` con `scroll-margin-top` y borde teal discreto en `:target`.
+- **Navegación:**
+  - Enlaces de sección con hash en raíz (`/#inicio`, …) para funcionar desde `/cv` y otras rutas.
+  - Sidebar desktop / bottom bar mobile; `aria-current` vía IntersectionObserver parseando el id del href.
 
 ## 5. Layout Principles
 - **Grid:** Sistema de 12 columnas clásico para escritorio. Layout tipo "Bento" asimétrico para los proyectos.
@@ -68,4 +77,6 @@
 
 ## 9. Agent Prompt Guide
 - Para crear la sección principal: "Usa Tailwind CSS siguiendo estrictamente el DESIGN.md. Crea un Hero component usando el fondo Base, texto Primary con fuente Inter. Añade dos botones según las reglas de Component Stylings."
-- Para la bitácora: "Usa timeline con `<details>`/`<summary>` nativo (sin ARIA redundante). En el summary cerrado: `<time>`, pills mono de tecnologías, `h3` para el headline descriptivo, `<span>` para el summary editorial y CTA textual Ver/Ocultar diagnóstico. El panel abierto sigue el orden Contexto → Error → Investigación → Solución → Aprendizaje (icono lightbulb). Conserva el lenguaje visual oscuro, flat y teal del DESIGN.md."
+- Para la bitácora: "Usa timeline con `<details>`/`<summary>` nativo (sin ARIA redundante). En el summary cerrado: `<time>`, pills mono de tecnologías, `h3` para el headline descriptivo, `<span>` para el summary editorial y CTA textual Ver/Ocultar diagnóstico. El panel abierto sigue el orden Contexto → Error → Investigación → Solución → Aprendizaje con iconos Lucide vía `<Icon />`. Conserva el lenguaje visual oscuro, flat y teal del DESIGN.md."
+- Para iconos: "Usa `src/components/ui/Icon.astro` y el registro en `icons.ts`. Imports nominales de `@lucide/astro`. No añadas brand icons a Lucide; usa `simple-icons` o SVG filled de marca."
+- Para fichas de proyecto: "Label «Por qué nace» con campo `origin`. Títulos de producto entendibles, no nombres de repo. Grid Bento con `align-items: start`."

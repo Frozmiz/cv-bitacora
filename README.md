@@ -8,12 +8,17 @@ CV interactivo y bitácora de ingeniería. Portfolio personal construido con Ast
 - **[Tailwind CSS v4](https://tailwindcss.com)**: Estilos con design tokens en `@theme`
 - **[Zod v4](https://zod.dev)**: Validación de esquemas para las colecciones de contenido
 - **[Fuse.js](https://fusejs.io)**: Búsqueda híbrida en la bitácora (literal en DOM + fuzzy con pesos)
+- **[@lucide/astro](https://lucide.dev/guide/astro)**: Iconos SVG tipados vía `Icon.astro` (registro nominal reducido)
+- **[simple-icons](https://simpleicons.org/)**: Logos de marca del stack en el Hero (Lucide v1 no incluye brand icons)
 
 ## Estructura
 
 ```
 src/
 ├── components/
+│   ├── ui/
+│   │   ├── Icon.astro        # Wrapper tipado sobre @lucide/astro
+│   │   └── icons.ts          # Registro nominal IconName
 │   ├── Hero.astro            # Carta de presentación principal
 │   ├── Navigation.astro      # Sidebar (desktop) / Bottom Bar (mobile)
 │   ├── ProjectCard.astro     # Tarjeta de proyecto (frontmatter + cuerpo markdown)
@@ -43,8 +48,8 @@ El cuerpo markdown de cada proyecto se renderiza bajo el bloque «Por qué nace�
 
 ```md
 ---
-title: Mi Proyecto
-status: En Desarrollo   # Completado | En Desarrollo | Mantenimiento
+title: Mi Proyecto          # Título de producto, no slug de repo
+status: En Desarrollo       # Completado | En Desarrollo | Mantenimiento
 description: Descripción corta.
 technologies: [Angular, NestJS]
 origin: Por qué nace el proyecto y a qué necesidad responde.
@@ -92,6 +97,22 @@ learning: Aprendizaje obtenido.
 ### Búsqueda
 
 `LogbookSection` serializa un índice plano al Custom Element. Fuse pondera, en este orden de prioridad: `headline`, `summary`, `error`, `context`, `technologies`, y el resto de campos del diagnóstico. La coincidencia literal en DOM tiene prioridad; el fuzzy solo resalta cuando hay `matches` aplicables.
+
+### Iconos Lucide
+
+Uso tipado vía `<Icon name="..." />` (`src/components/ui/`).
+
+- Añadir un icono: import nominal en `icons.ts` + clave en `iconRegistry`. TypeScript rechaza nombres fuera de `IconName`.
+- Props: `Omit<IconProps, ...>` de `@lucide/astro`; API oficial `stroke-width`; a11y controlada en el wrapper.
+- Brand icons (GitHub filled, LinkedIn, logos del Hero): no van a Lucide; Hero usa `simple-icons`.
+
+### Navegación
+
+Los enlaces de sección usan rutas con hash en la raíz (`/#inicio`, `/#proyectos`, …) para funcionar también desde `/cv`. El highlight activo parsea el id desde cualquier `href` con `#`.
+
+### Grid de proyectos
+
+Bento con `align-items: start`: un item featured alto (p. ej. Slowork + landings) no estira las fichas vecinas de la misma fila.
 
 ## Comandos
 
