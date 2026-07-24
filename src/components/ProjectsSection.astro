@@ -93,6 +93,8 @@ const sloworkLandings = featuredProject?.data.landings;
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;                    /* 24px: múltiplo de 4px */
+    /* Sin stretch: un item alto (featured + landings) no alarga al vecino */
+    align-items: start;
   }
 
   /* md: 2 columnas */
@@ -120,10 +122,12 @@ const sloworkLandings = featuredProject?.data.landings;
   }
 
   .projects-grid__item {
-    /* Necesario para que ProjectCard con height:100% ocupe el item completo */
     display: flex;
     flex-direction: column;
     gap: 0;
+    /* Refuerzo por si algún item overridea el align del grid */
+    align-self: start;
+    width: 100%;
   }
 
   .projects-grid__item--featured {
