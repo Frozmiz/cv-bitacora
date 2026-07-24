@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
 import ArticleWireframe from './ArticleWireframe.astro';
 
 interface Props {
@@ -19,6 +20,8 @@ const corner = featured ? 'tr' : CORNERS[index % CORNERS.length];
 const intensity = featured ? 'medium' : 'soft';
 const crop = (index % 4) as 0 | 1 | 2 | 3;
 const { title, status, description, problem, technologies, links } = project.data;
+const { Content } = await render(project);
+const hasBody = Boolean(project.body?.trim());
 
 /** Indicador visual de estado: colores del DESIGN.md §2 Status/Logbook */
 const STATUS_MAP = {
@@ -59,6 +62,12 @@ const statusInfo = STATUS_MAP[status];
       <span class="project-card__problem-label">Problema</span>
       <p class="project-card__problem-text">{problem}</p>
     </div>
+
+    {hasBody && (
+      <div class="project-card__notes">
+        <Content />
+      </div>
+    )}
   </div>
 
   <!-- ── Footer ────────────────────────────────────────────────────────── -->
@@ -229,6 +238,40 @@ const statusInfo = STATUS_MAP[status];
     line-height: 1.65;
     color: #A1A1AA;
     margin: 0;
+  }
+
+  .project-card__notes {
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: #A1A1AA;
+  }
+
+  .project-card__notes :global(p) {
+    margin: 0 0 0.75rem;
+  }
+
+  .project-card__notes :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .project-card__notes :global(a) {
+    color: #14B8A6;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .project-card__notes :global(a:hover) {
+    color: #2DD4BF;
+  }
+
+  .project-card__notes :global(code) {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    background-color: #1a1a1a;
+    color: #14b8a6;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    border: 1px solid #27272a;
   }
 
   /* ── Footer ──────────────────────────────────────────────────────────── */
