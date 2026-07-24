@@ -23,3 +23,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Engram local export (backup versionado en cerebro-global vía brain-push)
+.engram/

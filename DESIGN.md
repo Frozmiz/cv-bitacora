@@ -39,8 +39,12 @@
   - Tipografía monospace, todo en mayúsculas.
   - Fondo Surface 2, Borde 1px sólido `#27272A`, radio `4px`.
 - **Entradas de la Bitácora (Timeline):**
-  - Línea vertical izquierda (`#27272A`) que conecta los problemas.
-  - Nodos circulares en la línea que usan los colores de estado (Status) para indicar si el problema fue crítico o leve.
+  - Línea vertical izquierda (`#27272A`) que conecta los casos.
+  - Marcador de batalla (espadas) sobre la línea, con acento verde/teal; respeta `prefers-reduced-motion`.
+  - Entrada cerrada (`<details>`/`<summary>`): fecha mono secundaria → pills de tecnología → titular (`h3`, mayor peso) → resumen (`summary`, texto Secondary) → CTA textual teal (`Ver diagnóstico →` / `Ocultar diagnóstico ↑`).
+  - Sin chevron aislado ni botones anidados dentro del `<summary>`. Blurb y CTA como `<span>` (no `<p>` dentro de `<summary>`).
+  - Entrada abierta: bloques Contexto / Error / Investigación / Solución / Aprendizaje con labels mono y colores Status/Logbook. Aprendizaje usa icono Lucide `lightbulb` inline.
+  - Ancla por entrada: `id="logbook-{entry.id}"` con `scroll-margin-top` y borde teal discreto en `:target`.
 
 ## 5. Layout Principles
 - **Grid:** Sistema de 12 columnas clásico para escritorio. Layout tipo "Bento" asimétrico para los proyectos.
@@ -64,4 +68,4 @@
 
 ## 9. Agent Prompt Guide
 - Para crear la sección principal: "Usa Tailwind CSS siguiendo estrictamente el DESIGN.md. Crea un Hero component usando el fondo Base, texto Primary con fuente Inter. Añade dos botones según las reglas de Component Stylings."
-- Para la bitácora: "Crea una tarjeta de logbook. Usa fondo Surface 1. El título del error debe ir en fuente Sans-serif, pero las tecnologías implicadas deben renderizarse en etiquetas (pills) usando la fuente Monospace detallada en Typography Rules."
+- Para la bitácora: "Usa timeline con `<details>`/`<summary>` nativo (sin ARIA redundante). En el summary cerrado: `<time>`, pills mono de tecnologías, `h3` para el headline descriptivo, `<span>` para el summary editorial y CTA textual Ver/Ocultar diagnóstico. El panel abierto sigue el orden Contexto → Error → Investigación → Solución → Aprendizaje (icono lightbulb). Conserva el lenguaje visual oscuro, flat y teal del DESIGN.md."

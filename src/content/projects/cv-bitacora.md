@@ -13,6 +13,8 @@ links:
   github: https://github.com/Frozmiz/cv-bitacora
 ---
 
-Contenido validado por Zod en `content.config.ts` (colecciones `projects` y `logbook`). La bitácora usa un Web Component `<logbook-search>` embebido en Astro que serializa índices planos al cliente y filtra entradas del timeline con Fuse.js sin re-renderizar el HTML del servidor.
+Contenido validado por Zod en `content.config.ts` (colecciones `projects` y `logbook`). Cada entrada de bitácora exige `headline` descriptivo y `summary` de una frase; el listado cerrado muestra fecha, tecnologías, titular, resumen y CTA textual dentro de `<details>`/`<summary>`. Anclas in-page: `/#logbook-{id}` (sin rutas por slug).
+
+La bitácora usa un Web Component `<logbook-search>` embebido en Astro que serializa índices planos al cliente (incluye `summary`) y filtra el timeline con búsqueda híbrida: literal en DOM primero, Fuse.js ponderado después, sin re-renderizar el HTML del servidor. Las fichas de proyecto renderizan también el cuerpo markdown (enlaces internos a la bitácora incluidos).
 
 Identidad visual definida en `DESIGN.md`: modo oscuro nativo, tipografía Inter + JetBrains Mono, acentos teal/violeta y grid Bento asimétrico sin box-shadows.
