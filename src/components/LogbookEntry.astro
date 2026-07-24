@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import ArticleWireframe from './ArticleWireframe.astro';
+import Icon from './ui/Icon.astro';
 
 interface Props {
   entry: CollectionEntry<'logbook'>;
@@ -48,28 +49,7 @@ function parseInlineCode(text: string): string {
 
   <!-- Marcador de batalla sobre la línea del timeline -->
   <span class="lb-entry__marker" aria-hidden="true">
-    <svg
-      class="lb-entry__swords"
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
-      <line x1="13" x2="19" y1="19" y2="13" />
-      <line x1="16" x2="20" y1="16" y2="20" />
-      <line x1="19" x2="21" y1="21" y2="19" />
-      <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" />
-      <line x1="5" x2="9" y1="14" y2="18" />
-      <line x1="7" x2="4" y1="17" y2="20" />
-      <line x1="3" x2="5" y1="19" y2="21" />
-    </svg>
+    <Icon name="swords" class="lb-entry__swords" size={16} stroke-width={2} />
   </span>
 
   <details class="lb-entry__details" id={`logbook-${entry.id}`}>
@@ -105,7 +85,8 @@ function parseInlineCode(text: string): string {
       <div class="lb-entry__body">
         <section class="lb-entry__block" aria-labelledby={`context-${entry.id}`}>
           <h4 id={`context-${entry.id}`} class="lb-entry__label lb-entry__label--context">
-            <span aria-hidden="true">◇</span> Contexto
+            <Icon name="diamond" class="lb-entry__label-icon" size={12} stroke-width={2} />
+            Contexto
           </h4>
           <p
             class="lb-entry__text lb-entry__context"
@@ -116,7 +97,8 @@ function parseInlineCode(text: string): string {
 
         <section class="lb-entry__block" aria-labelledby={`error-${entry.id}`}>
           <h4 id={`error-${entry.id}`} class="lb-entry__label lb-entry__label--error">
-            <span aria-hidden="true">⚑</span> Error / Dificultad
+            <Icon name="flag" class="lb-entry__label-icon" size={12} stroke-width={2} />
+            Error / Dificultad
           </h4>
           <div class="lb-entry__terminal">
             <span class="lb-entry__terminal-prompt" aria-hidden="true">$</span>
@@ -126,37 +108,23 @@ function parseInlineCode(text: string): string {
 
         <section class="lb-entry__block" aria-labelledby={`research-${entry.id}`}>
           <h4 id={`research-${entry.id}`} class="lb-entry__label lb-entry__label--research">
-            <span aria-hidden="true">◎</span> Investigación
+            <Icon name="circle-dot" class="lb-entry__label-icon" size={12} stroke-width={2} />
+            Investigación
           </h4>
           <p class="lb-entry__text" data-search-field="research" set:html={parseInlineCode(research)} />
         </section>
 
         <section class="lb-entry__block" aria-labelledby={`solution-${entry.id}`}>
           <h4 id={`solution-${entry.id}`} class="lb-entry__label lb-entry__label--solution">
-            <span aria-hidden="true">✓</span> Solución
+            <Icon name="check" class="lb-entry__label-icon" size={12} stroke-width={2} />
+            Solución
           </h4>
           <p class="lb-entry__text" data-search-field="solution" set:html={parseInlineCode(solution)} />
         </section>
 
         <section class="lb-entry__block" aria-labelledby={`learning-${entry.id}`}>
           <h4 id={`learning-${entry.id}`} class="lb-entry__label lb-entry__label--learning">
-            <svg
-              class="lb-entry__label-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
-              <path d="M9 18h6" />
-              <path d="M10 22h4" />
-            </svg>
+            <Icon name="lightbulb" class="lb-entry__label-icon" size={12} stroke-width={2} />
             Aprendizaje
           </h4>
           <p class="lb-entry__text" data-search-field="learning" set:html={parseInlineCode(learning)} />
