@@ -12,15 +12,20 @@ const LOGBOOK_CORNERS = ['tr', 'br'] as const;
 const { entry, index = 0 } = Astro.props;
 const corner = LOGBOOK_CORNERS[index % LOGBOOK_CORNERS.length];
 const crop = ((index % 2) + 2) as 2 | 3;
-const { date, headline, context, technologies, error, research, solution, learning } =
+const { date, headline, summary, context, technologies, error, research, solution, learning } =
   entry.data;
 
-/** Formatea la fecha en español: "10 jun 2026" */
+/** Formato compacto: "22 JUL 2026" */
 const dateFormatted = new Intl.DateTimeFormat('es-ES', {
   day: '2-digit',
   month: 'short',
   year: 'numeric',
-}).format(date);
+})
+  .format(date)
+  .replace(/\./g, '')
+  .toUpperCase();
+
+const dateIso = date.toISOString().slice(0, 10);
 
 /**
  * Convierte los backticks de un string en etiquetas <code> inline.
@@ -68,29 +73,31 @@ function parseInlineCode(text: string): string {
   </span>
 
   <details class="lb-entry__details" id={`logbook-${entry.id}`}>
+    <!--
+      Contenido de <summary>: phrasing + encabezados.
+      El blurb va en <span display:block>, no en <p> (HTML inválido).
+    -->
     <summary class="lb-entry__summary">
-      <time
-        datetime={date.toISOString().slice(0, 10)}
-        class="lb-entry__date"
-      >
-        {dateFormatted}
-      </time>
-      <span class="lb-entry__headline">{headline}</span>
-      <span class="lb-entry__toggle" aria-hidden="true">
-        <svg
-          class="lb-entry__chevron"
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+      <span class="lb-entry__meta">
+        <time datetime={dateIso} class="lb-entry__date">{dateFormatted}</time>
+        <span class="lb-entry__tech" aria-label="Tecnologías implicadas">
+          {technologies.map((tech) => (
+            <span class="pill">{tech}</span>
+          ))}
+        </span>
+      </span>
+
+      <h3 class="lb-entry__headline">{headline}</h3>
+
+      <span
+        class="lb-entry__blurb"
+        data-search-field="summary"
+        set:html={parseInlineCode(summary)}
+      />
+
+      <span class="lb-entry__cta">
+        <span class="lb-entry__cta-closed">Ver diagnóstico →</span>
+        <span class="lb-entry__cta-open">Ocultar diagnóstico ↑</span>
       </span>
     </summary>
 
@@ -106,12 +113,6 @@ function parseInlineCode(text: string): string {
             set:html={parseInlineCode(context)}
           />
         </section>
-
-        <ul class="lb-entry__tech" aria-label="Tecnologías implicadas">
-          {technologies.map((tech) => (
-            <li><span class="pill">{tech}</span></li>
-          ))}
-        </ul>
 
         <section class="lb-entry__block" aria-labelledby={`error-${entry.id}`}>
           <h4 id={`error-${entry.id}`} class="lb-entry__label lb-entry__label--error">
@@ -139,7 +140,24 @@ function parseInlineCode(text: string): string {
 
         <section class="lb-entry__block" aria-labelledby={`learning-${entry.id}`}>
           <h4 id={`learning-${entry.id}`} class="lb-entry__label lb-entry__label--learning">
-            <span aria-hidden="true">→</span> Aprendizaje
+            <svg
+              class="lb-entry__label-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+              <path d="M9 18h6" />
+              <path d="M10 22h4" />
+            </svg>
+            Aprendizaje
           </h4>
           <p class="lb-entry__text" data-search-field="learning" set:html={parseInlineCode(learning)} />
         </section>
@@ -256,16 +274,24 @@ function parseInlineCode(text: string): string {
     width: 100%;
     max-width: 100%;
     min-width: 0;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    scroll-margin-top: 5rem;
+    transition: border-color 200ms ease;
+  }
+
+  .lb-entry__details:target {
+    border-color: #14b8a6;
   }
 
   .lb-entry__summary {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: baseline;
-    gap: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.625rem;
     list-style: none;
     cursor: pointer;
-    padding: 0.5rem 0.75rem;
+    padding: 0.75rem;
     margin: 0;
     width: 100%;
     max-width: 100%;
@@ -286,50 +312,88 @@ function parseInlineCode(text: string): string {
     border-color: #27272a;
   }
 
+  .lb-entry__summary:focus-visible {
+    outline: 2px solid #14b8a6;
+    outline-offset: 2px;
+  }
+
   .lb-entry__details[open] > .lb-entry__summary {
     margin-bottom: 1rem;
     border-color: #27272a;
     background-color: #111111;
   }
 
+  .lb-entry__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    width: 100%;
+    min-width: 0;
+  }
+
   .lb-entry__date {
     font-family: var(--font-mono, monospace);
-    font-size: 0.75rem;
-    color: #a1a1aa;
-    letter-spacing: 0.05em;
-    text-transform: lowercase;
+    font-size: 0.6875rem;
+    color: #71717a;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     white-space: nowrap;
   }
 
-  .lb-entry__headline {
-    font-size: 0.9375rem;
-    font-weight: 500;
-    letter-spacing: -0.015em;
-    color: #ededed;
-    line-height: 1.45;
+  .lb-entry__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
     min-width: 0;
+  }
+
+  .lb-entry__headline {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #ededed;
+    line-height: 1.4;
+    margin: 0;
+    min-width: 0;
+    max-width: 100%;
     overflow-wrap: break-word;
   }
 
-  .lb-entry__toggle {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
+  .lb-entry__blurb {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.55;
     color: #a1a1aa;
+    max-width: 72ch;
+    overflow-wrap: break-word;
+  }
+
+  .lb-entry__cta {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.125rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: #14b8a6;
     transition: color 200ms ease;
   }
 
-  .lb-entry__summary:hover .lb-entry__toggle,
-  .lb-entry__details[open] .lb-entry__toggle {
-    color: #14b8a6;
+  .lb-entry__summary:hover .lb-entry__cta {
+    color: #2dd4bf;
   }
 
-  .lb-entry__chevron {
-    transition: transform 220ms ease;
+  .lb-entry__cta-open {
+    display: none;
   }
 
-  .lb-entry__details[open] .lb-entry__chevron {
-    transform: rotate(180deg);
+  .lb-entry__details[open] .lb-entry__cta-closed {
+    display: none;
+  }
+
+  .lb-entry__details[open] .lb-entry__cta-open {
+    display: inline;
   }
 
   .lb-entry__panel {
@@ -359,18 +423,14 @@ function parseInlineCode(text: string): string {
     margin: 0;
   }
 
+  .lb-entry__label-icon {
+    flex-shrink: 0;
+    display: block;
+  }
+
   .lb-entry__context {
     color: #d4d4d8;
     max-width: 70ch;
-  }
-
-  .lb-entry__tech {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.375rem;
-    list-style: none;
-    margin: -0.5rem 0 0;
-    padding: 0;
   }
 
   .lb-entry__label--context  { color: #14b8a6; }
@@ -427,22 +487,16 @@ function parseInlineCode(text: string): string {
 
   @media (max-width: 640px) {
     .lb-entry__summary {
-      grid-template-columns: 1fr auto;
-      grid-template-rows: auto auto;
-    }
-
-    .lb-entry__date {
-      grid-column: 1 / -1;
+      padding: 0.625rem 0.5rem;
+      gap: 0.5rem;
     }
 
     .lb-entry__headline {
-      grid-column: 1;
+      font-size: 1rem;
     }
 
-    .lb-entry__toggle {
-      grid-column: 2;
-      grid-row: 2;
-      align-self: center;
+    .lb-entry__blurb {
+      font-size: 0.8125rem;
     }
   }
 </style>

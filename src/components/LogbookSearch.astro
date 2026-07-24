@@ -35,7 +35,7 @@ const { index } = Astro.props;
     <input
       type="search"
       class="ls-input"
-      placeholder="> Buscar por titular, error o tecnología (exacta o ~aprox)..."
+      placeholder="> Buscar por titular, resumen, error o tecnología (exacta o ~aprox)..."
       aria-label="Buscar en la bitácora"
       autocomplete="off"
       spellcheck="false"
@@ -60,6 +60,7 @@ const { index } = Astro.props;
   interface SearchItem {
     id: string;
     headline: string;
+    summary: string;
     context: string;
     error: string;
     technologies: string[];
@@ -70,6 +71,7 @@ const { index } = Astro.props;
 
   const FIELD_SELECTORS: Record<string, string> = {
     headline: '.lb-entry__headline',
+    summary: '[data-search-field="summary"]',
     context: '.lb-entry__context',
     error: '.lb-entry__terminal-text',
     research: '[data-search-field="research"]',
@@ -96,12 +98,13 @@ const { index } = Astro.props;
 
       this.#fuse = new Fuse(data, {
         keys: [
-          { name: 'headline',     weight: 0.35 },
-          { name: 'error',        weight: 0.25 },
-          { name: 'context',      weight: 0.2 },
-          { name: 'technologies', weight: 0.1 },
-          { name: 'research',     weight: 0.05 },
-          { name: 'solution',     weight: 0.04 },
+          { name: 'headline',     weight: 0.32 },
+          { name: 'summary',      weight: 0.22 },
+          { name: 'error',        weight: 0.18 },
+          { name: 'context',      weight: 0.12 },
+          { name: 'technologies', weight: 0.08 },
+          { name: 'research',     weight: 0.04 },
+          { name: 'solution',     weight: 0.03 },
           { name: 'learning',     weight: 0.01 },
         ],
         threshold: 0.32,

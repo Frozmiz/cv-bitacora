@@ -16,6 +16,7 @@ const searchIndex = JSON.stringify(
   entries.map((e) => ({
     id:           e.id,
     headline:     e.data.headline,
+    summary:      e.data.summary,
     context:      e.data.context,
     error:        e.data.error,
     technologies: e.data.technologies,
@@ -54,9 +55,9 @@ const searchIndex = JSON.stringify(
         </svg>
       </span>
       <p class="logbook-section__hint-text">
-        Cada caso empieza por un titular; al expandir, el bloque <strong>Contexto</strong> explica
-        dónde y por qué surgió el problema, seguido de error, investigación, solución y aprendizaje.
-        También puedes usar el buscador.
+        Cada caso muestra un titular descriptivo y un resumen del incidente. Con
+        <strong>Ver diagnóstico</strong> se abre el detalle: contexto, error, investigación,
+        solución y aprendizaje. También puedes usar el buscador.
       </p>
     </div>
   </header>
