@@ -37,7 +37,7 @@ src/
 ## Contenido
 
 El contenido vive en `src/content/` como archivos Markdown con frontmatter validado por Zod.
-El cuerpo markdown de cada proyecto se renderiza bajo el bloque Problema en `ProjectCard`.
+El cuerpo markdown de cada proyecto se renderiza bajo el bloque «Por qué nace» en `ProjectCard`.
 
 **Añadir un proyecto**: crear `src/content/projects/nombre.md`:
 
@@ -47,7 +47,7 @@ title: Mi Proyecto
 status: En Desarrollo   # Completado | En Desarrollo | Mantenimiento
 description: Descripción corta.
 technologies: [Angular, NestJS]
-problem: El problema que resuelve.
+origin: Por qué nace el proyecto y a qué necesidad responde.
 links:
   github: https://github.com/...
   demo: https://...

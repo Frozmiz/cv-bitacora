@@ -1,5 +1,5 @@
 ---
-title: GTVMOTOR
+title: Plataforma GTVMOTOR
 status: En Desarrollo
 description: Plataforma integral para concesionarias de vehículos (compra, alquiler, lavado, tasación y panel administrativo), con SSR híbrido y despliegue en producción en AWS EC2.
 technologies:
@@ -10,7 +10,7 @@ technologies:
   - Prisma
   - Tailwind CSS
   - SSR
-problem: Las concesionarias gestionaban inventario, reservas y tasaciones con hojas de cálculo y llamadas telefónicas, generando desincronización de stock, conflictos de agenda y pérdida de leads. GTVMOTOR unifica el flujo operativo con roles diferenciados (admin, agente, cliente) en un solo producto.
+origin: La gestión del inventario, las reservas y las operaciones se realizaba mediante hojas de cálculo y llamadas, provocando desajustes de stock, conflictos de agenda y pérdida de oportunidades. GTVMOTOR nace para centralizar todo el flujo operativo en una única plataforma.
 links:
   github: https://github.com/frozmiz/gtvmotor
   demo: https://gtvmotor.es

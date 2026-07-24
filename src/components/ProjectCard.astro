@@ -20,7 +20,7 @@ const { project, featured = false, index = 0 } = Astro.props;
 const corner = featured ? 'tr' : CORNERS[index % CORNERS.length];
 const intensity = featured ? 'medium' : 'soft';
 const crop = (index % 4) as 0 | 1 | 2 | 3;
-const { title, status, description, problem, technologies, links } = project.data;
+const { title, status, description, origin, technologies, links } = project.data;
 const { Content } = await render(project);
 const hasBody = Boolean(project.body?.trim());
 
@@ -59,9 +59,9 @@ const statusInfo = STATUS_MAP[status];
   <div class="project-card__body">
     <p class="project-card__description">{description}</p>
 
-    <div class="project-card__problem">
-      <span class="project-card__problem-label">Problema</span>
-      <p class="project-card__problem-text">{problem}</p>
+    <div class="project-card__origin">
+      <span class="project-card__origin-label">Por qué nace</span>
+      <p class="project-card__origin-text">{origin}</p>
     </div>
 
     {hasBody && (
@@ -205,13 +205,13 @@ const statusInfo = STATUS_MAP[status];
     margin: 0;
   }
 
-  .project-card__problem {
+  .project-card__origin {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
   }
 
-  .project-card__problem-label {
+  .project-card__origin-label {
     font-family: var(--font-mono, monospace);
     font-size: 0.7rem;
     text-transform: uppercase;
@@ -219,7 +219,7 @@ const statusInfo = STATUS_MAP[status];
     color: #A1A1AA;
   }
 
-  .project-card__problem-text {
+  .project-card__origin-text {
     font-size: 0.875rem;
     line-height: 1.65;
     color: #A1A1AA;

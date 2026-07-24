@@ -1,5 +1,5 @@
 ---
-title: Finca El Sarao
+title: Academia Digital Finca El Sarao
 status: En Desarrollo
 description: Plataforma EdTech para Academia Digital Finca El Sarao con cursos online, campus de alumnos, panel de administración, blog editorial y seguimiento de progreso por lección.
 technologies:
@@ -9,7 +9,7 @@ technologies:
   - PostgreSQL
   - Tailwind CSS v4
   - DaisyUI 5
-problem: La academia necesitaba centralizar matrículas, progreso de lecciones, pagos (Stripe) y vídeo (Bunny.net) sin depender de LMS genéricos que no encajaban con su modelo de negocio, su identidad visual ni el flujo editorial del blog.
+origin: La academia necesitaba matrículas, progreso de lecciones, pagos y vídeo bajo su propia identidad, sin acoplarse a un LMS genérico. La Academia Digital Finca El Sarao nace para centralizar el campus, el blog editorial y la administración en una plataforma a medida.
 links:
   demo: https://fincaelsarao.com
 ---

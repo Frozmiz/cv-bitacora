@@ -1,5 +1,5 @@
 ---
-title: cv-bitacora
+title: CV interactivo y bitácora
 status: En Desarrollo
 description: CV interactivo y bitácora de ingeniería, portfolio vivo con design system dark-mode, grid Bento de proyectos y timeline de problemas técnicos resueltos con búsqueda difusa.
 technologies:
@@ -8,7 +8,7 @@ technologies:
   - Zod
   - Fuse.js
   - TypeScript
-problem: Un CV en PDF no transmite decisiones arquitectónicas reales ni el estilo de trabajo. Hacía falta un sitio que combine portfolio visual con un registro honesto de errores, investigación y aprendizajes, la misma información que alimenta la memoria Engram del día a día.
+origin: Un CV en PDF difícilmente refleja las decisiones técnicas, la forma de trabajar y la evolución profesional que hay detrás de cada proyecto. Este espacio nace para reunir portfolio y bitácora en una experiencia viva, visual y consultable.
 links:
   github: https://github.com/Frozmiz/cv-bitacora
 ---
