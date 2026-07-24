@@ -1,0 +1,24 @@
+---
+import type { IconProps } from '@lucide/astro';
+import { iconRegistry, type IconName } from './icons';
+
+interface Props extends Omit<IconProps, 'aria-label' | 'aria-hidden' | 'role'> {
+  name: IconName;
+  /**
+   * Solo cuando el icono es significativo por sí mismo.
+   * En botones y enlaces, el nombre accesible va en el elemento interactivo
+   * y el icono permanece decorativo (sin label).
+   */
+  label?: string;
+}
+
+const { name, label, ...rest } = Astro.props;
+const IconComponent = iconRegistry[name];
+---
+
+<IconComponent
+  {...rest}
+  {...(label
+    ? { 'aria-label': label, role: 'img' as const }
+    : { 'aria-hidden': true as const })}
+/>

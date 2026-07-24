@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@lucide/astro": "^1.26.0",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.4.6",
     "fuse.js": "^7.4.2",
