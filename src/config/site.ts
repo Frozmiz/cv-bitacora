@@ -1,7 +1,7 @@
 /** Rutas y metadatos globales del sitio. */
 
 export const site = {
-  name: 'frozmiz.dev',
+  name: 'https://alejandrogl.is-a.dev',
   email: 'alejandrogl92_it@outlook.es',
 } as const;
 

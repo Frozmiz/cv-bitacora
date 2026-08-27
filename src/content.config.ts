@@ -19,7 +19,6 @@ const projects = defineCollection({
     featured: z.boolean().optional(),
     description: z.string(),
     technologies: z.array(z.string()),
-    /** Origen del proyecto: por qué nace y a qué necesidad responde. */
     origin: z.string(),
     landings: z.array(landingSchema).optional(),
     links: z
