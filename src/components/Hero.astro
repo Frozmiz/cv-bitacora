@@ -1,6 +1,6 @@
 ---
 import {
-  siAngular, siNestjs, siAstro, siTypescript, siTailwindcss,
+  siAngular, siTypescript,
 } from 'simple-icons';
 import { site } from '../config/site';
 
@@ -13,12 +13,16 @@ const {
   image = '/images/hero-cover.jpg',
 } = Astro.props;
 
-const techStack = [
-  { name: 'Angular',     icon: siAngular,     color: `#${siAngular.hex}` },
-  { name: 'NestJS',      icon: siNestjs,      color: `#${siNestjs.hex}` },
-  { name: 'Astro',       icon: siAstro,       color: `#${siAstro.hex}` },
-  { name: 'TypeScript',  icon: siTypescript,  color: `#${siTypescript.hex}` },
-  { name: 'TailwindCSS', icon: siTailwindcss, color: `#${siTailwindcss.hex}` },
+type TechPill =
+  | { name: string; icon: { path: string; hex: string } }
+  | { name: string };
+
+const techStack: TechPill[] = [
+  { name: 'Angular 21', icon: siAngular },
+  { name: 'TypeScript', icon: siTypescript },
+  { name: 'RxJS' },
+  { name: 'Signals' },
+  { name: 'NgRx' },
 ];
 ---
 
@@ -52,38 +56,40 @@ const techStack = [
     <!-- Badge -->
     <p class="hero__badge">
       <span class="hero__badge-dot" aria-hidden="true"></span>
-      Disponible para proyectos
+      Disponible · incorporación inmediata
     </p>
 
     <!-- Nombre: firma de autor entre el badge y el titular -->
     <p class="hero__name" aria-label="Alejandro González López">
       <span class="hero__name-line" aria-hidden="true">· · ·</span>
-      ALEJANDRO GONZALEZ LOPEZ
+      ALEJANDRO GONZÁLEZ LÓPEZ
     </p>
 
-    <!-- Titular: dos líneas, segunda en muted -->
+    <!-- Titular: Angular Frontend Engineer -->
     <h1 class="hero__title">
-      <span class="hero__title-line">Construyendo</span>
-      <span class="hero__title-line">interfaces</span>
-      <span class="hero__title-line hero__title-muted">escalables.</span>
+      <span class="hero__title-line">Angular Frontend</span>
+      <span class="hero__title-line hero__title-muted">Engineer</span>
     </h1>
 
     <!-- Bio -->
     <p class="hero__bio">
-      Soy <strong>Frontend Lead&nbsp;/&nbsp;Product Engineer</strong> con foco en
-      arquitecturas de interfaces de alto rendimiento y diseño de sistemas escalables.
+      Especializado en Angular moderno, TypeScript, RxJS, Signals y NgRx, con experiencia
+      construyendo aplicaciones web reales, SSR, arquitectura frontend, rendimiento e
+      integración end-to-end.
     </p>
 
     <!-- Pills de tecnologías -->
     <ul class="hero__stack" aria-label="Stack principal">
-      {techStack.map(({ name, icon, color }) => (
+      {techStack.map((item) => (
         <li>
           <span class="hero__pill">
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"
-              aria-hidden="true" style={`color: ${color};`}>
-              <path d={icon.path} />
-            </svg>
-            {name.toUpperCase()}
+            {'icon' in item && (
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"
+                aria-hidden="true" style={`color: #${item.icon.hex};`}>
+                <path d={item.icon.path} />
+              </svg>
+            )}
+            {item.name.toUpperCase()}
           </span>
         </li>
       ))}
@@ -91,7 +97,7 @@ const techStack = [
 
     <!-- CTAs -->
     <div class="hero__ctas">
-      <a href="#proyectos" class="hero__cta hero__cta--primary">Ver Proyectos</a>
+      <a href="#proyectos" class="hero__cta hero__cta--primary">Ver proyectos</a>
       <a href="/cv" class="hero__cta hero__cta--ghost">Ver CV</a>
       <a href={`mailto:${site.email}`} class="hero__cta hero__cta--ghost">Contactar</a>
     </div>
@@ -263,7 +269,7 @@ const techStack = [
     flex-shrink: 0;
   }
 
-  /* ── Titular: tres líneas con jerarquía tipográfica ─────────────────── */
+  /* ── Titular: dos líneas con jerarquía tipográfica ─────────────────── */
   .hero__title {
     display: flex;
     flex-direction: column;
@@ -281,7 +287,7 @@ const techStack = [
     color: #EDEDED;
   }
 
-  /* Tercera línea: acento teal: legible sobre el wireframe y cierre del titular */
+  /* Segunda línea: acento teal */
   .hero__title-muted {
     color: #14B8A6;
   }

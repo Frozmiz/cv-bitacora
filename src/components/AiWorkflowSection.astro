@@ -2,7 +2,7 @@
 import { aiWorkflow } from '../config/ai-workflow';
 ---
 
-<section class="ai-workflow" aria-labelledby="ai-workflow-title">
+<section id="ia-workflow" class="ai-workflow" aria-labelledby="ai-workflow-title">
   <header class="ai-workflow__header">
     <p class="ai-workflow__label">{aiWorkflow.label}</p>
     <h3 id="ai-workflow-title" class="ai-workflow__title">{aiWorkflow.title}</h3>
@@ -58,8 +58,8 @@ import { aiWorkflow } from '../config/ai-workflow';
 
 <style>
   .ai-workflow {
-    margin-top: 1.5rem;
-    padding-top: 2rem;
+    padding-top: var(--spacing-section, 6rem);
+    padding-bottom: var(--spacing-section, 6rem);
     border-top: 1px solid #27272a;
   }
 

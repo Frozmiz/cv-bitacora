@@ -11,20 +11,34 @@ const landingSchema = z.object({
   learning: z.string(),
 });
 
+const projectImageSchema = z.object({
+  src: z.string().startsWith('/'),
+  alt: z.string(),
+  position: z.string().optional(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
+});
+
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
+    kind: z.enum(['client', 'startup', 'personal']),
     status: z.enum(['Completado', 'En Desarrollo', 'Mantenimiento']),
+    role: z.string().optional(),
+    period: z.string().optional(),
     featured: z.boolean().optional(),
     description: z.string(),
     technologies: z.array(z.string()),
+    highlights: z.array(z.string()).optional(),
+    image: projectImageSchema.optional(),
     origin: z.string(),
     landings: z.array(landingSchema).optional(),
     links: z
       .object({
         github: z.url().optional(),
         demo: z.url().optional(),
+        caseStudy: z.url().optional(),
       })
       .optional(),
   }),

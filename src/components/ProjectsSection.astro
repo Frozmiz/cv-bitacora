@@ -1,68 +1,75 @@
 ---
 import { getCollection } from 'astro:content';
-import ProjectCard from './ProjectCard.astro';
-import SloworkLandings from './SloworkLandings.astro';
+import ProfessionalProjectCard from './ProfessionalProjectCard.astro';
+import PersonalProjectCard from './PersonalProjectCard.astro';
 
-/**
- * Ordena los proyectos: featured primero, luego por estado
- * ("En Desarrollo" → "Mantenimiento" → "Completado").
- * El primero de la lista será el featured (2 columnas en el grid Bento).
- */
-const STATUS_ORDER = { 'En Desarrollo': 0, 'Mantenimiento': 1, 'Completado': 2 };
+/** Orden explícito de casos profesionales (experiencia real). */
+const PROFESSIONAL_ORDER = ['finca-el-sarao', 'gtvmotor', 'slowork'] as const;
 
-const projects = (await getCollection('projects')).sort((a, b) => {
-  const featuredDiff = Number(b.data.featured ?? false) - Number(a.data.featured ?? false);
-  if (featuredDiff !== 0) return featuredDiff;
+const allProjects = await getCollection('projects');
 
-  const statusDiff = STATUS_ORDER[a.data.status] - STATUS_ORDER[b.data.status];
-  if (statusDiff !== 0) return statusDiff;
+const byId = new Map(allProjects.map((p) => [p.id, p]));
 
-  return a.data.title.localeCompare(b.data.title, 'es');
-});
+const professionalProjects = PROFESSIONAL_ORDER.map((id) => byId.get(id)).filter(
+  (p): p is NonNullable<typeof p> => Boolean(p),
+);
 
-const featuredProject = projects[0];
-const sloworkLandings = featuredProject?.data.landings;
+const personalProjects = allProjects.filter((p) => p.data.kind === 'personal');
 ---
 
 <section id="proyectos" class="projects-section">
-  <!-- Encabezado de sección -->
   <header class="projects-section__header">
-    <p class="projects-section__label">Casos reales</p>
+    <p class="projects-section__label">Portfolio</p>
     <h2 class="projects-section__title">Proyectos</h2>
   </header>
 
-  <!--
-    Grid Bento asimétrico:
-      · 1 columna en mobile
-      · 2 columnas en md
-      · 3 columnas en lg
-    El primer proyecto recibe data-featured y ocupa 2 columnas (lg:col-span-2).
-    Esto crea la asimetría: [grande | normal]
-                                   [normal | normal]
-  -->
-  <ul class="projects-grid" role="list" aria-label="Lista de proyectos">
-    {projects.map((project, index) => (
-      <li class:list={['projects-grid__item', { 'projects-grid__item--featured': index === 0 }]}>
-        <ProjectCard project={project} featured={index === 0} index={index} />
-        {index === 0 && project.data.landings && project.data.landings.length > 0 && (
-          <SloworkLandings landings={project.data.landings} />
-        )}
-      </li>
-    ))}
-  </ul>
+  <!-- Casos reales -->
+  <div class="projects-group">
+    <header class="projects-group__header">
+      <h3 class="projects-group__title">Casos reales</h3>
+      <p class="projects-group__intro">
+        Productos desarrollados en entornos reales de cliente y startup.
+      </p>
+    </header>
 
+    <ul class="projects-list" role="list" aria-label="Proyectos profesionales">
+      {professionalProjects.map((project) => (
+        <li class="projects-list__item">
+          <ProfessionalProjectCard project={project} />
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- Proyecto personal -->
+  {personalProjects.length > 0 && (
+    <div class="projects-group projects-group--personal">
+      <header class="projects-group__header">
+        <h3 class="projects-group__title">Proyecto personal</h3>
+        <p class="projects-group__intro">
+          Portfolio técnico, documentación y experimentación.
+        </p>
+      </header>
+
+      <ul class="projects-list projects-list--personal" role="list" aria-label="Proyectos personales">
+        {personalProjects.map((project) => (
+          <li class="projects-list__item">
+            <PersonalProjectCard project={project} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
 </section>
 
 <style>
-  /* ── Sección ─────────────────────────────────────────────────────────── */
   .projects-section {
     padding-top: var(--spacing-section, 6rem);
     padding-bottom: var(--spacing-section, 6rem);
   }
 
-  /* ── Encabezado ──────────────────────────────────────────────────────── */
   .projects-section__header {
-    margin-bottom: 2.5rem;          /* 40px */
+    margin-bottom: 2.5rem; /* 40px: Proyectos → Casos reales */
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
@@ -73,7 +80,7 @@ const sloworkLandings = featuredProject?.data.landings;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #14B8A6;                 /* acento primario */
+    color: #14b8a6;
     margin: 0;
   }
 
@@ -81,57 +88,71 @@ const sloworkLandings = featuredProject?.data.landings;
     font-size: clamp(1.5rem, 3vw, 2rem);
     font-weight: 600;
     letter-spacing: -0.03em;
-    color: #EDEDED;
+    color: #ededed;
     margin: 0;
   }
 
-  /* ── Grid Bento ──────────────────────────────────────────────────────── */
-  .projects-grid {
+  .projects-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* 24px: group header → primera card */
+  }
+
+  .projects-group--personal {
+    margin-top: 3.25rem; /* 52px: última pro card → separador personal */
+    padding-top: 1rem; /* 16px: borde → título personal */
+    border-top: 1px solid #27272a;
+    gap: 1.125rem; /* 18px: subtítulo personal → card */
+  }
+
+  .projects-group__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem; /* 6px: título → descripción */
+    max-width: 62ch;
+  }
+
+  .projects-group__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: #ededed;
+    margin: 0;
+  }
+
+  .projects-group--personal .projects-group__title {
+    color: #8b5cf6;
+  }
+
+  .projects-group__intro {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: #a1a1aa;
+    margin: 0;
+  }
+
+  .projects-list {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;                    /* 24px: múltiplo de 4px */
-    /* Sin stretch: un item alto (featured + landings) no alarga al vecino */
-    align-items: start;
-  }
-
-  /* md: 2 columnas */
-  @media (min-width: 768px) {
-    .projects-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    /* Featured: 2 de 2 columnas */
-    .projects-grid__item--featured {
-      grid-column: span 2;
-    }
-  }
-
-  /* lg: 3 columnas: asimetría Bento */
-  @media (min-width: 1024px) {
-    .projects-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    /* Featured: 2 de 3 columnas */
-    .projects-grid__item--featured {
-      grid-column: span 2;
-    }
-  }
-
-  .projects-grid__item {
     display: flex;
     flex-direction: column;
-    gap: 0;
-    /* Refuerzo por si algún item overridea el align del grid */
-    align-self: start;
+    gap: 1.5rem; /* 24px entre cards profesionales */
     width: 100%;
   }
 
-  .projects-grid__item--featured {
-    /* La sección de landings vive dentro del item destacado a ancho completo */
-    align-self: stretch;
+  @media (max-width: 640px) {
+    .projects-list {
+      gap: 1.125rem; /* 18px en mobile */
+    }
+  }
+
+  .projects-list--personal {
+    gap: 1rem;
+  }
+
+  .projects-list__item {
+    width: 100%;
+    min-width: 0;
   }
 </style>

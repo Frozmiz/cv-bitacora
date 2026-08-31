@@ -1,7 +1,8 @@
 ---
 import { cv } from "../config/site";
 import RootsSection from "./RootsSection.astro";
-import AiWorkflowSection from "./AiWorkflowSection.astro";
+
+const defaultCv = cv.files[cv.defaultLocale];
 ---
 
 <section id="sobre-mi" class="about-section">
@@ -14,25 +15,23 @@ import AiWorkflowSection from "./AiWorkflowSection.astro";
     <div class="about-section__body">
       <div class="about-section__bio">
         <p class="about-section__lead">
-          Soy <strong>Frontend Developer&nbsp;/&nbsp;Product Engineer</strong> con varios
-          años construyendo productos digitales: aplicaciones web en producción, MVPs
-          y proyectos propios donde pruebo stack y enfoque.
+          Soy <strong>Angular Frontend Engineer</strong> especializado en Angular moderno,
+          TypeScript, RxJS, Signals y NgRx, con experiencia construyendo aplicaciones web
+          reales desde la arquitectura frontend hasta producción.
         </p>
         <p class="about-section__text">
-          Me especializo en arquitecturas de interfaces de alto rendimiento,
-          diseño de sistemas escalables y la frontera entre ingeniería y producto.
-          Este sitio es mi CV vivo: proyectos reales y una bitácora con los
-          problemas que he resuelto en el camino.
+          Mi foco principal es la arquitectura mantenible, el estado reactivo, SSR,
+          rendimiento, integración con APIs, autenticación, accesibilidad y experiencia de
+          usuario. También trabajo con NestJS, GraphQL, PostgreSQL, Docker y AWS, lo que me
+          permite entender el producto end-to-end sin diluir mi especialización frontend.
         </p>
       </div>
 
       <RootsSection />
 
-      <AiWorkflowSection />
-
       <div class="about-section__actions">
         <a href="/cv" class="about-section__cv-link"> Ver currículum en PDF </a>
-        <a href={cv.file} download class="about-section__cv-download">
+        <a href={defaultCv.path} download class="about-section__cv-download">
           Descargar
         </a>
       </div>

@@ -1,0 +1,514 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import type { CollectionEntry } from 'astro:content';
+import Icon from './ui/Icon.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const {
+  title,
+  kind,
+  status,
+  role,
+  period,
+  description,
+  technologies,
+  highlights = [],
+  links,
+  landings,
+  image,
+} = project.data;
+
+const MAX_TECH = 8;
+const MAX_HIGHLIGHTS = 4;
+
+const visibleTech = technologies.slice(0, MAX_TECH);
+const visibleHighlights = highlights.slice(0, MAX_HIGHLIGHTS);
+const overflowTech = technologies.length - visibleTech.length;
+
+const KIND_EYEBROW = {
+  client: 'Client project',
+  startup: 'Startup product',
+} as const;
+
+/** Indicador visual de estado: colores del DESIGN.md §2 Status/Logbook */
+const STATUS_MAP = {
+  Completado: { color: '#10B981', label: 'Completado' },
+  'En Desarrollo': { color: '#F59E0B', label: 'En Desarrollo' },
+  Mantenimiento: { color: '#14B8A6', label: 'Mantenimiento' },
+} satisfies Record<typeof status, { color: string; label: string }>;
+
+const statusInfo = STATUS_MAP[status];
+const eyebrow = KIND_EYEBROW[kind as keyof typeof KIND_EYEBROW] ?? kind;
+const eyebrowLine = period ? `${eyebrow} · ${period}` : eyebrow;
+
+const hasLinks = links?.demo || links?.caseStudy || links?.github;
+const hasSurfaces = landings && landings.length > 0;
+
+const imageDiskPath = image?.src
+  ? path.join(process.cwd(), 'public', image.src.replace(/^\//, ''))
+  : null;
+const hasImage = Boolean(image && imageDiskPath && fs.existsSync(imageDiskPath));
+const imagePosition = image?.position ?? 'center';
+const imageWidth = image?.width ?? 1600;
+const imageHeight = image?.height ?? 900;
+const imageAspectRatio =
+  image?.width && image?.height ? `${image.width} / ${image.height}` : '16 / 9';
+---
+
+<article
+  class:list={['pro-card', { 'pro-card--has-media': hasImage }]}
+  aria-label={`Proyecto: ${title}`}
+>
+  {hasImage && image && (
+    <div
+      class="pro-card__media"
+      style={`--project-image-position: ${imagePosition}; --project-aspect-ratio: ${imageAspectRatio};`}
+    >
+      <img
+        src={image.src}
+        alt={image.alt}
+        width={imageWidth}
+        height={imageHeight}
+        loading="lazy"
+        decoding="async"
+        sizes="(min-width: 1024px) 896px, 100vw"
+        class="pro-card__media-img"
+      />
+    </div>
+  )}
+
+  <div class="pro-card__body">
+    <div class="pro-card__layout">
+    <!-- Columna principal -->
+    <div class="pro-card__main">
+      <header class="pro-card__meta">
+        <p class="pro-card__eyebrow">{eyebrowLine}</p>
+        <span class="pro-card__status" aria-label={`Estado: ${statusInfo.label}`}>
+          <span
+            class="pro-card__status-dot"
+            style={`background-color: ${statusInfo.color};`}
+            aria-hidden="true"
+          ></span>
+          <span class="pro-card__status-label">{statusInfo.label}</span>
+        </span>
+      </header>
+
+      <h3 class="pro-card__title">{title}</h3>
+
+      {role && <p class="pro-card__role">{role}</p>}
+
+      <p class="pro-card__description">{description}</p>
+
+      <ul class="pro-card__tech" aria-label="Tecnologías principales">
+        {visibleTech.map((tech) => (
+          <li><span class="pill pill--muted">{tech}</span></li>
+        ))}
+        {overflowTech > 0 && (
+          <li><span class="pill pill--muted">+{overflowTech}</span></li>
+        )}
+      </ul>
+
+      {hasSurfaces && (
+        <div class="pro-card__surfaces">
+          <span class="pro-card__surfaces-label">Product surfaces</span>
+          <ul class="pro-card__surfaces-list" aria-label="Superficies del producto">
+            {landings.map((landing) => (
+              <li>
+                {landing.url ? (
+                  <a
+                    href={landing.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="pro-card__surface-chip"
+                  >
+                    {landing.name}
+                  </a>
+                ) : (
+                  <span class="pro-card__surface-chip pro-card__surface-chip--static">
+                    {landing.name}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {hasLinks && (
+        <div class="pro-card__actions">
+          {links?.demo && (
+            <a
+              href={links.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pro-card__btn pro-card__btn--primary"
+              aria-label={`Ver proyecto ${title}`}
+            >
+              <Icon name="external-link" size={14} stroke-width={2} />
+              Ver proyecto
+            </a>
+          )}
+          {links?.caseStudy && (
+            <a
+              href={links.caseStudy}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pro-card__btn pro-card__btn--ghost"
+              aria-label={`Ver case study de ${title}`}
+            >
+              <Icon name="book-open" size={14} stroke-width={2} />
+              Ver case study
+            </a>
+          )}
+          {links?.github && (
+            <a
+              href={links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pro-card__btn pro-card__btn--ghost"
+              aria-label={`Ver código fuente de ${title} en GitHub`}
+            >
+              GitHub
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+
+    <!-- Columna highlights -->
+    {visibleHighlights.length > 0 && (
+      <aside class="pro-card__aside" aria-label="Aspectos técnicos destacados">
+        <p class="pro-card__highlights-label">Highlights</p>
+        <ul class="pro-card__highlights">
+          {visibleHighlights.map((item) => (
+            <li class="pro-card__highlight">
+              <span class="pro-card__check" aria-hidden="true">
+                <Icon name="check" size={14} stroke-width={2.5} />
+              </span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .pro-card {
+    width: 100%;
+    background-color: #111111;
+    border: 1px solid #27272a;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: border-color 200ms ease;
+  }
+
+  .pro-card:hover {
+    border-color: #3f3f46;
+  }
+
+  .pro-card__media {
+    width: 100%;
+    aspect-ratio: var(--project-aspect-ratio, 16 / 9);
+    max-height: 400px;
+    overflow: hidden;
+    border-bottom: 1px solid #27272a;
+    background-color: #0a0a0a;
+  }
+
+  .pro-card__media-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--project-image-position, center);
+    display: block;
+    image-rendering: auto;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pro-card__media-img {
+      transition: transform 220ms ease;
+    }
+
+    .pro-card:hover .pro-card__media-img {
+      transform: scale(1.01);
+    }
+  }
+
+  .pro-card__body {
+    padding: clamp(1.5rem, 2.5vw, 2rem);
+  }
+
+  .pro-card__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    min-width: 0;
+  }
+
+  @media (min-width: 768px) {
+    .pro-card__layout {
+      grid-template-columns: minmax(0, 1.6fr) minmax(240px, 0.8fr);
+      gap: 2rem;
+      align-items: start;
+    }
+  }
+
+  .pro-card__main {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .pro-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .pro-card__eyebrow {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #14b8a6;
+    margin: 0;
+  }
+
+  .pro-card__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-shrink: 0;
+  }
+
+  .pro-card__status-dot {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .pro-card__status-label {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a1a1aa;
+    white-space: nowrap;
+  }
+
+  .pro-card__title {
+    font-size: clamp(1.125rem, 2vw, 1.375rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: #ededed;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .pro-card__role {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #a1a1aa;
+    margin: -0.25rem 0 0;
+  }
+
+  .pro-card__description {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: #ededed;
+    margin: 0;
+    max-width: 62ch;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .pro-card__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  :global(.pill--muted) {
+    font-size: 0.65rem;
+    color: #71717a;
+    border-color: #27272a;
+    background-color: #0a0a0a;
+  }
+
+  .pro-card__surfaces {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+  }
+
+  .pro-card__surfaces-label {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #71717a;
+  }
+
+  .pro-card__surfaces-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pro-card__surface-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0.25rem 0.625rem;
+    border-radius: 4px;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    color: #a1a1aa;
+    background-color: #1a1a1a;
+    border: 1px solid #27272a;
+    text-decoration: none;
+    transition:
+      color 150ms ease,
+      border-color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .pro-card__surface-chip:hover {
+    color: #ededed;
+    border-color: #3f3f46;
+    background-color: #111111;
+  }
+
+  .pro-card__surface-chip:focus-visible {
+    outline: 2px solid #14b8a6;
+    outline-offset: 2px;
+  }
+
+  .pro-card__surface-chip--static {
+    cursor: default;
+  }
+
+  .pro-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    padding-top: 0.25rem;
+  }
+
+  .pro-card__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-family: var(--font-mono, monospace);
+    text-decoration: none;
+    transition:
+      opacity 150ms ease,
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .pro-card__btn:focus-visible {
+    outline: 2px solid #14b8a6;
+    outline-offset: 2px;
+  }
+
+  .pro-card__btn--primary {
+    background-color: #ededed;
+    color: #0a0a0a;
+    border: 1px solid #ededed;
+  }
+
+  .pro-card__btn--primary:hover {
+    opacity: 0.88;
+  }
+
+  .pro-card__btn--ghost {
+    background-color: transparent;
+    color: #a1a1aa;
+    border: 1px solid #27272a;
+  }
+
+  .pro-card__btn--ghost:hover {
+    background-color: #1a1a1a;
+    color: #ededed;
+    border-color: #3f3f46;
+  }
+
+  .pro-card__aside {
+    min-width: 0;
+    padding: 1.25rem;
+    background-color: #0a0a0a;
+    border: 1px solid #27272a;
+    border-radius: 0.5rem;
+  }
+
+  @media (max-width: 767px) {
+    .pro-card__aside {
+      padding: 1rem;
+    }
+  }
+
+  .pro-card__highlights-label {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #14b8a6;
+    margin: 0 0 0.875rem;
+  }
+
+  .pro-card__highlights {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .pro-card__highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: #ededed;
+  }
+
+  .pro-card__check {
+    flex-shrink: 0;
+    display: inline-flex;
+    color: #10b981;
+    margin-top: 0.1rem;
+  }
+</style>

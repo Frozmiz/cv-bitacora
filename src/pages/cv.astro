@@ -4,9 +4,23 @@ import path from 'node:path';
 import Layout from '../layouts/Layout.astro';
 import { cv } from '../config/site';
 
-const pdfPublicPath = cv.file.replace(/^\//, '');
-const pdfDiskPath = path.join(process.cwd(), 'public', pdfPublicPath);
-const pdfAvailable = fs.existsSync(pdfDiskPath);
+type CvLocale = keyof typeof cv.files;
+
+const localeEntries = Object.entries(cv.files) as [CvLocale, (typeof cv.files)[CvLocale]][];
+
+const availability = Object.fromEntries(
+  localeEntries.map(([key, file]) => {
+    const diskPath = path.join(process.cwd(), 'public', file.path.replace(/^\//, ''));
+    return [key, fs.existsSync(diskPath)];
+  }),
+) as Record<CvLocale, boolean>;
+
+const initialLocale =
+  (availability[cv.defaultLocale] ? cv.defaultLocale : null) ??
+  localeEntries.find(([key]) => availability[key])?.[0] ??
+  cv.defaultLocale;
+
+const initialFile = cv.files[initialLocale];
 ---
 
 <Layout
@@ -20,34 +34,114 @@ const pdfAvailable = fs.existsSync(pdfDiskPath);
       <p class="cv-page__subtitle">{cv.label}</p>
     </header>
 
-    {pdfAvailable ? (
-      <div class="cv-page__viewer">
+    <div
+      class="cv-page__locale"
+      role="tablist"
+      aria-label="Idioma del currículum"
+    >
+      {localeEntries.map(([key, file]) => (
+        <button
+          type="button"
+          role="tab"
+          class="cv-page__locale-btn"
+          data-locale={key}
+          data-file={file.path}
+          data-label={file.label}
+          aria-selected={key === initialLocale ? 'true' : 'false'}
+          aria-controls="cv-viewer-panel"
+          id={`cv-tab-${key}`}
+          disabled={!availability[key]}
+        >
+          {file.label}
+        </button>
+      ))}
+    </div>
+
+    {initialLocale && availability[initialLocale] ? (
+      <div
+        id="cv-viewer-panel"
+        class="cv-page__viewer"
+        role="tabpanel"
+        aria-labelledby={`cv-tab-${initialLocale}`}
+      >
         <div class="cv-page__toolbar">
-          <a href={cv.file} target="_blank" rel="noopener noreferrer" class="cv-page__btn cv-page__btn--primary">
+          <a
+            id="cv-open-link"
+            href={initialFile.path}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cv-page__btn cv-page__btn--primary"
+          >
             Abrir en pestaña nueva
           </a>
-          <a href={cv.file} download class="cv-page__btn cv-page__btn--ghost">
+          <a
+            id="cv-download-link"
+            href={initialFile.path}
+            download
+            class="cv-page__btn cv-page__btn--ghost"
+          >
             Descargar PDF
           </a>
         </div>
         <iframe
+          id="cv-frame"
           class="cv-page__frame"
-          src={`${cv.file}#view=FitH`}
-          title={`CV de ${cv.label}`}
+          src={`${initialFile.path}#view=FitH`}
+          title={`CV de ${cv.label} (${initialFile.label})`}
         />
       </div>
     ) : (
       <div class="cv-page__missing" role="status">
         <p class="cv-page__missing-title">PDF no encontrado</p>
         <p class="cv-page__missing-text">
-          Añade tu currículum en
-          <code class="cv-page__code">public{cv.file}</code>
+          Añade los currículums en
+          <code class="cv-page__code">public/cv/</code>
           y vuelve a desplegar el sitio.
         </p>
+        <ul class="cv-page__missing-list">
+          {localeEntries.map(([key, file]) => (
+            <li>
+              <code class="cv-page__code">public{file.path}</code>
+              {!availability[key] && ' (no encontrado)'}
+            </li>
+          ))}
+        </ul>
       </div>
+    )}
+
+    {initialLocale && availability[initialLocale] && !availability.en && (
+      <p class="cv-page__note" role="status">
+        CV English no disponible todavía. Añade
+        <code class="cv-page__code">public{cv.files.en.path}</code>
+        para completar la sincronización.
+      </p>
     )}
   </section>
 </Layout>
+
+<script define:vars={{ cvLabel: cv.label }}>
+  const tabs = document.querySelectorAll('.cv-page__locale-btn:not([disabled])');
+  const frame = document.getElementById('cv-frame');
+  const openLink = document.getElementById('cv-open-link');
+  const downloadLink = document.getElementById('cv-download-link');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const file = tab.dataset.file;
+      const label = tab.dataset.label;
+      if (!file || !frame || !openLink || !downloadLink) return;
+
+      tabs.forEach((other) => {
+        other.setAttribute('aria-selected', other === tab ? 'true' : 'false');
+      });
+
+      frame.src = `${file}#view=FitH`;
+      frame.title = `CV de ${cvLabel} (${label})`;
+      openLink.href = file;
+      downloadLink.href = file;
+    });
+  });
+</script>
 
 <style>
   .cv-page {
@@ -87,6 +181,47 @@ const pdfAvailable = fs.existsSync(pdfDiskPath);
     font-size: 0.9375rem;
     color: #A1A1AA;
     margin: 0;
+  }
+
+  .cv-page__locale {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .cv-page__locale-btn {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: var(--font-mono, monospace);
+    color: #A1A1AA;
+    background-color: transparent;
+    border: 1px solid #27272A;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .cv-page__locale-btn:hover:not(:disabled) {
+    background-color: #1A1A1A;
+    color: #EDEDED;
+    border-color: #3F3F46;
+  }
+
+  .cv-page__locale-btn[aria-selected='true'] {
+    background-color: #14B8A6;
+    color: #0A0A0A;
+    border-color: #14B8A6;
+  }
+
+  .cv-page__locale-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 
   .cv-page__viewer {
@@ -162,12 +297,26 @@ const pdfAvailable = fs.existsSync(pdfDiskPath);
     font-size: 0.9375rem;
     line-height: 1.7;
     color: #A1A1AA;
+    margin: 0 0 1rem;
+  }
+
+  .cv-page__missing-list {
     margin: 0;
+    padding-left: 1.25rem;
+    color: #A1A1AA;
+    font-size: 0.875rem;
+    line-height: 1.7;
   }
 
   .cv-page__code {
     font-family: var(--font-mono, monospace);
     font-size: 0.875em;
     color: #14B8A6;
+  }
+
+  .cv-page__note {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #F59E0B;
   }
 </style>

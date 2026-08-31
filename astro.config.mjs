@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://cv-alejandrogl.vercel.app',
+  site: 'https://alejandrogl.is-a.dev',
   vite: {
     plugins: [tailwindcss()]
   }

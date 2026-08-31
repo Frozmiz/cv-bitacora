@@ -1,0 +1,184 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from './ui/Icon.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, description, technologies, links } = project.data;
+
+const techLine = technologies.join(' · ');
+const hasLinks = links?.demo || links?.github;
+---
+
+<article class="personal-card" aria-label={`Proyecto personal: ${title}`}>
+  <div class="personal-card__layout">
+    <div class="personal-card__content">
+      <p class="personal-card__eyebrow">Personal project</p>
+      <h3 class="personal-card__title">{title}</h3>
+      <p class="personal-card__tech-line" aria-label="Stack">{techLine}</p>
+      <p class="personal-card__description">{description}</p>
+    </div>
+
+    {hasLinks && (
+      <div class="personal-card__actions">
+        {links?.demo && (
+          <a
+            href={links.demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="personal-card__btn personal-card__btn--primary"
+            aria-label={`Ver ${title}`}
+          >
+            <Icon name="external-link" size={14} stroke-width={2} />
+            Ver proyecto
+          </a>
+        )}
+        {links?.github && (
+          <a
+            href={links.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="personal-card__btn personal-card__btn--ghost"
+            aria-label={`Ver código fuente de ${title} en GitHub`}
+          >
+            GitHub
+          </a>
+        )}
+      </div>
+    )}
+  </div>
+</article>
+
+<style>
+  .personal-card {
+    width: 100%;
+    background-color: #111111;
+    border: 1px solid #27272a;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    transition: border-color 200ms ease;
+  }
+
+  .personal-card:hover {
+    border-color: #3f3f46;
+  }
+
+  .personal-card__layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .personal-card__layout {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+  }
+
+  .personal-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .personal-card__eyebrow {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8b5cf6;
+    margin: 0;
+  }
+
+  .personal-card__title {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #ededed;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .personal-card__tech-line {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    color: #71717a;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .personal-card__description {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: #a1a1aa;
+    margin: 0;
+    max-width: 58ch;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .personal-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    flex-shrink: 0;
+  }
+
+  .personal-card__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-family: var(--font-mono, monospace);
+    text-decoration: none;
+    transition:
+      opacity 150ms ease,
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .personal-card__btn:focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+  }
+
+  .personal-card__btn--primary {
+    background-color: #ededed;
+    color: #0a0a0a;
+    border: 1px solid #ededed;
+  }
+
+  .personal-card__btn--primary:hover {
+    opacity: 0.88;
+  }
+
+  .personal-card__btn--ghost {
+    background-color: transparent;
+    color: #a1a1aa;
+    border: 1px solid #27272a;
+  }
+
+  .personal-card__btn--ghost:hover {
+    background-color: #1a1a1a;
+    color: #ededed;
+    border-color: #3f3f46;
+  }
+</style>
