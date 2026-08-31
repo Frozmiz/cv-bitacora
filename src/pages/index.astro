@@ -4,12 +4,10 @@ import Hero from '../components/Hero.astro';
 import AboutSection from '../components/AboutSection.astro';
 import ProjectsSection from '../components/ProjectsSection.astro';
 import LogbookSection from '../components/LogbookSection.astro';
+import AiWorkflowSection from '../components/AiWorkflowSection.astro';
 ---
 
-<Layout
-  title="https://alejandrogl.is-a.dev"
-  description="Frontend Lead / Product Engineer. CV interactivo y bitácora de ingeniería."
->
+<Layout>
   <!-- ── Hero (full-bleed, fuera del contenedor 1024px) ───────────────── -->
   <Hero slot="full-bleed" />
 
@@ -21,4 +19,7 @@ import LogbookSection from '../components/LogbookSection.astro';
 
   <!-- ── Bitácora ──────────────────────────────────────────────────────── -->
   <LogbookSection />
+
+  <!-- ── IA en el flujo de trabajo ─────────────────────────────────────── -->
+  <AiWorkflowSection />
 </Layout>

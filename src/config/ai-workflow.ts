@@ -33,7 +33,7 @@ export const aiWorkflow = {
     {
       id: 'spec-driven',
       title: 'Spec-Driven Development',
-      text: 'Guío al agente con prompts tipo Tech Lead: una intención por mensaje, sin mezclar refactor, diseño y bugfix. La spec incluye objetivo, restricciones, archivos de referencia obligatorios (`.cursor/rules/project.mdc`, `DESIGN.md`) y criterio de éxito verificable (typecheck, lint, tests concretos).',
+      text: 'Trabajo con specs acotadas y criterios de aceptación verificables: una intención por mensaje, sin mezclar refactor, diseño y bugfix. La spec incluye objetivo, restricciones, archivos de referencia obligatorios (`.cursor/rules/project.mdc`, `DESIGN.md`) y criterio de éxito verificable (typecheck, lint, tests concretos).',
       term: 'spec-driven',
       pills: [{ label: 'Cursor' }, { label: 'Prompts' }, { label: 'Specs' }],
     },
