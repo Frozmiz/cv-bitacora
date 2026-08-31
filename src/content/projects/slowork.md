@@ -1,23 +1,42 @@
 ---
-title: Ecosistema Slowork
+title: Slowork · Frontend Platform & Web Ecosystem
+kind: startup
 status: En Desarrollo
-featured: true
-description: Ecosistema digital de alojamientos, experiencias y comunidad para nómadas y viajeros de larga estancia, con sitio público SSR, blog editorial, lista de espera, portal Angular de operaciones, landings de captación para creadores y anfitriones y API GraphQL desplegada en AWS.
+role: Angular Frontend Engineer · Co-Founder
+period: Jan 2024 — Present
+description: Ecosistema digital para nómadas con sitio público SSR, blog editorial, portal Angular de operaciones y API GraphQL en AWS.
 technologies:
-  - Astro 6
   - Angular 21
+  - TypeScript
+  - RxJS
+  - Signals
+  - NgRx
+  - SignalStore
   - GraphQL
+  - Apollo
+  - Astro 6
   - Tailwind CSS v4
-  - DaisyUI 5
+  - OAuth 2.0
   - Vercel
   - AWS RDS
-origin: La marca, el contenido editorial, la lista de espera y la operación interna vivían en stacks y rutas distintas. Slowork nace para unificar la experiencia pública y el portal operativo en un mismo ecosistema, sin exponer la API al navegador ni duplicar lógica de negocio.
+highlights:
+  - Angular product frontend
+  - GraphQL / Apollo
+  - OAuth 2.0
+  - Astro public ecosystem
+image:
+  src: /images/projects/slowork.png
+  alt: Ecosistema Slowork con landing pública, login, blog y panel de administración
+  position: center top
+  width: 2048
+  height: 1152
+origin: La marca, el contenido editorial, la lista de espera y la operación interna vivían en stacks y rutas distintas. Slowork unifica experiencia pública y portal operativo en un mismo ecosistema, sin exponer la API al navegador ni duplicar lógica de negocio.
 links:
-  github: https://github.com/frozmiz/slowork
   demo: https://www.slowork.app
+  caseStudy: https://github.com/Frozmiz/slowork-frontend-case-study
 landings:
   - id: landing-v2
-    name: Landing pública, waiting list y blog
+    name: Public Site
     purpose: Landing principal de la marca en www.slowork.app. Home, blog editorial vía GraphQL, waitlist, formulario de contacto, páginas legales e i18n ES/EN con View Transitions.
     url: https://www.slowork.app
     technologies:
@@ -27,7 +46,7 @@ landings:
       - Vercel
     learning: "Consolidé React+Express y blog en un solo Astro 6 con patrón BFF: validación Zod en `src/models/`, rutas `src/pages/api/*` como proxy fino y cero acceso a BD desde el front. Presentación en Vercel, reglas de negocio en AWS, datos en RDS: cada capa escala sin arrastrar el stack entero."
   - id: content-creators
-    name: Landing de creadores
+    name: Creator Landing
     purpose: Landing de captación para el programa de creadores de contenido. Copy bilingüe en Content Layer, FAQ con JSON-LD, formulario multipaso y envío serverless de solicitudes.
     url: https://www.slowork.app/es/creators/
     technologies:
@@ -37,7 +56,7 @@ landings:
       - JSON-LD
     learning: "Separé producto en un deploy independiente con Content Layer + Zod por locale y BFF `POST /api/creator-applications/` para ocultar la API. El stepper valida por paso con Zod (no `reportValidity` nativo) y el markup vive en componentes `.astro`, nunca como JSX en el frontmatter."
   - id: hosts
-    name: Landing de hosts
+    name: Hosts Landing
     purpose: Landing estática de captación de hosts del programa slow travel. Una sola ruta `/hosts/` con alternancia ES|EN en cliente, orientada a conversión sin routing i18n de Astro.
     url: https://landing-hosts.vercel.app/hosts/
     technologies:
@@ -46,8 +65,8 @@ landings:
       - Static
     learning: "Para funnels acotados, un Astro estático de una ruta con toggle de idioma en cliente evita conflictos de `[lang]` y pantallas en blanco en deploys simples. No todo funnel necesita el mismo motor i18n que el sitio principal."
   - id: front-portal
-    name: Slowork Portal
-    purpose: Portal de operaciones desarrollado en Angular para centralizar la revisión y gestión de creadores, anfitriones, alojamientos, experiencias y colaboraciones dentro del ecosistema Slowork.
+    name: Operations Portal
+    purpose: Portal de operaciones en Angular para revisión y gestión de creadores, anfitriones, alojamientos, experiencias y colaboraciones.
     url: https://portal.slowork.app/login
     technologies:
       - Angular 21
@@ -57,6 +76,6 @@ landings:
     learning: "Al centralizar contadores admin en `AppStore` e inyectar `HostPendingService` en `withMethods`, apareció NG0200: Apollo lee el token del store en su factory y el store dependía de Apollo vía el servicio. Solución: `inject(Injector)` + `get()` perezoso dentro de la acción. Registrado en la bitácora (jun 2026, SignalStore + Apollo)."
 ---
 
-Arquitectura en tres capas: presentación en Vercel (Astro 6 `output: 'server'`, i18n ES/EN, View Transitions), lógica en AWS (`slowork-api` con GraphQL, Sequelize, waitlist/welcome) y datos en RDS.
+Startup constituida con equipo multidisciplinar (~15 personas) y dos desarrolladores principales en producto. Como Angular Frontend Engineer & co-founder desde enero 2024, tengo ownership significativo del frontend: Angular 21, RxJS, Signals, NgRx/SignalStore, GraphQL con Apollo, OAuth 2.0, flujos de booking/calendario, notificaciones, Creator Panel, UX de control de acceso y colaboración con backend. El API está liderado por otro desarrollador.
 
-La web pública concentra home, blog (posts vía GraphQL + `marked`), formularios BFF (`POST /api/waitlist/`, `/api/contact/`) con validación Zod y GA4 consolidado. El portal de operaciones es Angular 21 con Apollo Client, `signalStore` y módulos de blog, sites y admin.
+Arquitectura en tres capas: presentación en Vercel (Astro 6 SSR, i18n ES/EN, View Transitions, landings y blog con SEO técnico y Core Web Vitals), lógica en AWS (`slowork-api` con GraphQL y Sequelize) y datos en RDS. El portal Angular concentra operaciones internas. Existen usuarios MVP en el flujo de content creators. El código fuente del producto es privado; el case study público documenta el trabajo frontend.

@@ -1,21 +1,49 @@
 ---
-title: Academia Digital Finca El Sarao
+title: Finca El Sarao · Digital Platform & LMS
+kind: client
 status: En Desarrollo
-description: Plataforma EdTech para Academia Digital Finca El Sarao con cursos online, campus de alumnos, panel de administración, blog editorial y seguimiento de progreso por lección.
+role: Angular Frontend Engineer · Sole Developer
+period: May 2026 — Present
+description: Plataforma digital y LMS para un cliente real con web pública, catálogo de cursos, campus de alumnos, administración y reproducción de vídeo HLS.
 technologies:
   - Angular 21
-  - NestJS 11
-  - Prisma 7
+  - TypeScript
+  - RxJS
+  - Signals
+  - NestJS
+  - Prisma
   - PostgreSQL
-  - Tailwind CSS v4
-  - DaisyUI 5
-origin: La academia necesitaba matrículas, progreso de lecciones, pagos y vídeo bajo su propia identidad, sin acoplarse a un LMS genérico. La Academia Digital Finca El Sarao nace para centralizar el campus, el blog editorial y la administración en una plataforma a medida.
+  - Tailwind CSS
+  - DaisyUI
+  - HLS
+  - hls.js
+  - TUS
+  - Bunny.net
+  - Vercel
+  - Railway
+  - JWT
+  - SSR
+highlights:
+  - LMS & Student Campus
+  - Signed HLS video delivery
+  - Hybrid rendering
+  - Technical SEO
+image:
+  src: /images/projects/finca-el-sarao.png
+  alt: Campus virtual de Finca El Sarao con catálogo de cursos y progreso del alumno
+  position: center top
+  width: 2048
+  height: 1020
+origin: La academia necesitaba matrículas, acceso a cursos, campus de alumnos, contenido editorial y vídeo bajo su propia identidad, sin acoplarse a un LMS genérico. Finca El Sarao centraliza web pública, catálogo, LMS y administración en una plataforma a medida.
 links:
-  demo: https://fincaelsarao.com
+  demo: https://www.fincaelsarao.com/
+  caseStudy: https://github.com/Frozmiz/finca-el-sarao-case-study
 ---
 
-Monorepo pnpm con `api/` (NestJS 11 + Prisma 7) y `web/` (Angular 21 zoneless). Frontend en Vercel (`fincaelsarao.com`, Root = `web`); API y PostgreSQL en Railway (`api.fincaelsarao.com`). Arquitectura cross-origin (sin proxy Vercel salvo rewrite de `/sitemap.xml`). Proveedores desacoplados (`PaymentProvider`, `VideoProvider`) con mocks en desarrollo.
+Proyecto real como Angular Frontend Engineer / sole developer desde mayo 2026. Monorepo pnpm con `api/` (NestJS + Prisma) y `web/` (Angular 21 zoneless). Frontend en Vercel; API y PostgreSQL en Railway. Arquitectura cross-origin con render híbrido (SSR, prerender y CSR) y SEO técnico.
 
-Fase I–II en curso: auth JWT, blog SEO (Fase A: `SeoService`, JSON-LD, sitemap dinámico), campus del alumno, panel admin con tema oscuro, toasts con `@starting-style` e iconografía vía `AppIcon`. Incidencia de deploy Vercel documentada en la bitácora (jul 2026: monorepo pnpm + Prisma + Root Directory).
+Implementado y en curso: web pública, catálogo de cursos, LMS con módulos y lecciones, campus del alumno, interfaces de administración, matrículas y control de acceso, reproducción HLS con hls.js, subidas reanudables TUS hacia Bunny.net y acceso firmado al playback.
 
-El problema de las vistas previas al compartir enlaces en WhatsApp y otras redes quedó documentado como caso práctico en la [bitácora técnica](/#logbook-2026-07-22-finca-og-corporate-fallback).
+Auth JWT, blog con `SeoService`, JSON-LD, sitemap dinámico, toasts con `@starting-style` e iconografía vía `AppIcon`. El código fuente del producto es privado; el case study público documenta decisiones de arquitectura y despliegue.
+
+El problema de las vistas previas al compartir enlaces en WhatsApp quedó documentado en la [bitácora técnica](/#logbook-2026-07-22-finca-og-corporate-fallback).
