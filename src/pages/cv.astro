@@ -15,9 +15,11 @@ const availability = Object.fromEntries(
   }),
 ) as Record<CvLocale, boolean>;
 
+const availableEntries = localeEntries.filter(([key]) => availability[key]);
+
 const initialLocale =
   (availability[cv.defaultLocale] ? cv.defaultLocale : null) ??
-  localeEntries.find(([key]) => availability[key])?.[0] ??
+  availableEntries[0]?.[0] ??
   cv.defaultLocale;
 
 const initialFile = cv.files[initialLocale];
@@ -34,12 +36,13 @@ const initialFile = cv.files[initialLocale];
       <p class="cv-page__subtitle">{cv.label}</p>
     </header>
 
+    {availableEntries.length > 0 && (
     <div
       class="cv-page__locale"
       role="tablist"
       aria-label="Idioma del currículum"
     >
-      {localeEntries.map(([key, file]) => (
+      {availableEntries.map(([key, file]) => (
         <button
           type="button"
           role="tab"
@@ -50,12 +53,12 @@ const initialFile = cv.files[initialLocale];
           aria-selected={key === initialLocale ? 'true' : 'false'}
           aria-controls="cv-viewer-panel"
           id={`cv-tab-${key}`}
-          disabled={!availability[key]}
         >
           {file.label}
         </button>
       ))}
     </div>
+    )}
 
     {initialLocale && availability[initialLocale] ? (
       <div
@@ -108,22 +111,15 @@ const initialFile = cv.files[initialLocale];
         </ul>
       </div>
     )}
-
-    {initialLocale && availability[initialLocale] && !availability.en && (
-      <p class="cv-page__note" role="status">
-        CV English no disponible todavía. Añade
-        <code class="cv-page__code">public{cv.files.en.path}</code>
-        para completar la sincronización.
-      </p>
-    )}
   </section>
 </Layout>
 
 <script define:vars={{ cvLabel: cv.label }}>
-  const tabs = document.querySelectorAll('.cv-page__locale-btn:not([disabled])');
+  const tabs = document.querySelectorAll('.cv-page__locale-btn');
   const frame = document.getElementById('cv-frame');
   const openLink = document.getElementById('cv-open-link');
   const downloadLink = document.getElementById('cv-download-link');
+  const panel = document.getElementById('cv-viewer-panel');
 
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
@@ -134,6 +130,10 @@ const initialFile = cv.files[initialLocale];
       tabs.forEach((other) => {
         other.setAttribute('aria-selected', other === tab ? 'true' : 'false');
       });
+
+      if (panel && tab.id) {
+        panel.setAttribute('aria-labelledby', tab.id);
+      }
 
       frame.src = `${file}#view=FitH`;
       frame.title = `CV de ${cvLabel} (${label})`;
@@ -217,11 +217,6 @@ const initialFile = cv.files[initialLocale];
     background-color: #14B8A6;
     color: #0A0A0A;
     border-color: #14B8A6;
-  }
-
-  .cv-page__locale-btn:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
   }
 
   .cv-page__viewer {
@@ -312,11 +307,5 @@ const initialFile = cv.files[initialLocale];
     font-family: var(--font-mono, monospace);
     font-size: 0.875em;
     color: #14B8A6;
-  }
-
-  .cv-page__note {
-    margin-top: 1rem;
-    font-size: 0.875rem;
-    color: #F59E0B;
   }
 </style>

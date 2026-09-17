@@ -3,7 +3,7 @@ title: Slowork · Frontend Platform & Web Ecosystem
 kind: startup
 status: En Desarrollo
 role: Angular Frontend Engineer · Co-Founder
-period: Jan 2024 — Present
+period: Jan 2024 - Present
 description: Ecosistema digital para nómadas con sitio público SSR, blog editorial, portal Angular de operaciones y API GraphQL en AWS.
 technologies:
   - Angular 21

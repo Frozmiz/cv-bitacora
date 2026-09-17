@@ -2,7 +2,7 @@
 import { technicalRoots } from '../config/roots';
 ---
 
-<div class="mt-16">
+<section id="influencias" class="roots-section" aria-labelledby="roots-heading">
   <h2
     id="roots-heading"
     class="m-0 mb-10 font-mono text-sm uppercase tracking-widest text-zinc-400"
@@ -51,9 +51,14 @@ import { technicalRoots } from '../config/roots';
       </article>
     ))}
   </div>
-</div>
+</section>
 
 <style>
+  .roots-section {
+    padding-top: var(--spacing-section, 6rem);
+    padding-bottom: var(--spacing-section, 6rem);
+  }
+
   .roots-pillar__linkedin {
     display: inline-flex;
     align-items: center;

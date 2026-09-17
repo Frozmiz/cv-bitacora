@@ -3,7 +3,7 @@ title: GTVMOTOR · Automotive Web Platform
 kind: client
 status: En Desarrollo
 role: Angular Frontend Engineer · Sole Developer
-period: Dec 2024 — Present
+period: Dec 2024 - Present
 description: Plataforma web para concesionaria con catálogo, reservas, tasación, panel administrativo y SSR híbrido desplegado en AWS EC2.
 technologies:
   - Angular
