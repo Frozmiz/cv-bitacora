@@ -3,7 +3,7 @@ title: Finca El Sarao · Digital Platform & LMS
 kind: client
 status: En Desarrollo
 role: Angular Frontend Engineer · Sole Developer
-period: May 2026 — Present
+period: May 2026 - Present
 description: Plataforma digital y LMS para un cliente real con web pública, catálogo de cursos, campus de alumnos, administración y reproducción de vídeo HLS.
 technologies:
   - Angular 21

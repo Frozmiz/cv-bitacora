@@ -16,11 +16,11 @@ export const technicalRoots = [
       'Evolución hacia la lógica estructural, Clean Architecture y adopción de Angular con tipado estricto como framework principal. También me introdujo a Engram y a una metodología de trabajo con agentes de IA.',
   },
   {
-    title: 'Rigor Técnico - Semantica - SEO',
+    title: 'Rigor Técnico - Semántica - SEO',
     mentor: 'Bienvenido Sáez (ConquerBlocks Academy)',
     linkedin: 'https://www.linkedin.com/in/bienvenidosaez/',
     description:
-      'Construcción de cimientos técnicos robustos y adopción de un enfoque pragmático ante retos complejos. También me introdujo a la semantica y a la importancia del SEO en el desarrollo de aplicaciones web.',
+      'Construcción de cimientos técnicos robustos y adopción de un enfoque pragmático ante retos complejos. También me introdujo a la semántica y a la importancia del SEO en el desarrollo de aplicaciones web.',
   },
   {
     title: 'Metodología Base - Lógica de Programación - Estructuras de control',

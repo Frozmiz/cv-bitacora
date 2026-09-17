@@ -124,6 +124,11 @@ Todos los comandos se ejecutan desde la raíz del proyecto con **pnpm**:
 | `pnpm run dev`     | Servidor de desarrollo en `localhost:4321`     |
 | `pnpm run build`   | Build de producción en `./dist/`               |
 | `pnpm run preview` | Preview del build antes de desplegar           |
+| `pnpm run cv:pdf`  | Regenera los PDF del CV desde `cv-src/`        |
+
+Los currículums publicados viven en `public/cv/` y **entran en el build como estáticos**. `pnpm run build` no invoca `cv:pdf` y no necesita Microsoft Edge.
+
+Para cambiar el texto del CV, edita `cv-src/es.html` o `cv-src/en.html` y ejecuta `pnpm run cv:pdf` en WSL con Edge instalado en Windows. Luego vuelve a construir. Si no puedes regenerar, no toques los PDF a mano: el origen editable es el HTML.
 
 ## Diseño
 

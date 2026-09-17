@@ -9,7 +9,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "cv:pdf": "node scripts/render-cv-pdf.mjs"
   },
   "dependencies": {
     "@lucide/astro": "^1.26.0",
